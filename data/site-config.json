@@ -37,11 +37,27 @@
     {
       "title": "Dự án",
       "desc": "Tổng hợp các sản phẩm phần mềm, website và giải pháp kỹ thuật đã triển khai.",
-      "url": "/info",
+      "url": "/du-an",
       "icon": "ri-folder-3-line",
       "image": "",
       "isSpa": true,
-      "spaRoute": "info"
+      "spaRoute": "du-an"
+    }
+  ],
+  "myProjects": [
+    {
+      "title": "Website Cá Nhân Nhật Tình",
+      "desc": "Trang hồ sơ cá nhân với hiệu ứng đại dương, Live2D & trình quản trị PWA.",
+      "url": "https://nhattinh486-art.github.io/",
+      "icon": "ri-global-line",
+      "image": ""
+    },
+    {
+      "title": "LocketGold DNS & Config",
+      "desc": "Hệ thống máy chủ DoH và cấu hình Shadowrocket tiện lợi.",
+      "url": "/locketlam",
+      "icon": "ri-shield-flash-line",
+      "image": ""
     }
   ],
   "social": [

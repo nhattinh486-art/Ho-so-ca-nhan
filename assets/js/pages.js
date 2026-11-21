@@ -37,11 +37,27 @@ window.DEFAULT_SITE_CONFIG = {
     {
       title: 'Dự án',
       desc: 'Tổng hợp các sản phẩm phần mềm, website và giải pháp kỹ thuật đã triển khai.',
-      url: '/info',
+      url: '/du-an',
       icon: 'ri-folder-3-line',
       image: '',
       isSpa: true,
-      spaRoute: 'info'
+      spaRoute: 'du-an'
+    }
+  ],
+  myProjects: [
+    {
+      title: 'Website Cá Nhân Nhật Tình',
+      desc: 'Trang hồ sơ cá nhân với hiệu ứng đại dương, Live2D & trình quản trị PWA.',
+      url: 'https://nhattinh486-art.github.io/',
+      icon: 'ri-global-line',
+      image: ''
+    },
+    {
+      title: 'LocketGold DNS & Config',
+      desc: 'Hệ thống máy chủ DoH và cấu hình Shadowrocket tiện lợi.',
+      url: '/locketlam',
+      icon: 'ri-shield-flash-line',
+      image: ''
     }
   ],
   social: [
@@ -353,6 +369,51 @@ window.SPA_PAGES = {
               </div>
             </a>
           `).join('')}
+        </div>
+      </section>
+    `;
+    }
+  },
+
+  'du-an': {
+    title: 'Nhật Tình',
+    docTitle: 'Dự Án — Nhật Tình',
+    render: () => {
+      const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
+      const list = cfg.myProjects || window.DEFAULT_SITE_CONFIG.myProjects || [];
+
+      return `
+      <section class="flex flex-col gap-y-5 md:flex-row md:gap-y-0">
+        <div class="md:min-w-36">
+          <h2 class="text-xl font-semibold">Menu</h2>
+        </div>
+        <div class="flex-1 flex flex-wrap items-center justify-start gap-3">
+          <a href="/" data-spa="home" class="spa-link inline-flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))] px-4 py-2 text-sm font-medium hover:border-sky-400 hover:text-sky-400 transition-all">
+            <span>←</span> Về Trang Chủ
+          </a>
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-y-5 md:flex-row md:gap-x-6 md:gap-y-0">
+        <div class="md:min-w-36 shrink-0">
+          <h2 class="text-xl font-semibold">Dự Án</h2>
+        </div>
+        <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          ${list.length ? list.map((item) => {
+            const isSpa = item.url && item.url.startsWith('/');
+            const attrs = isSpa
+              ? `href="${escHtml(item.url)}" data-spa="${escHtml(item.url.replace(/^\//, ''))}" class="spa-link profile-card p-4 flex items-start gap-3.5 group"`
+              : `href="${escHtml(item.url || '#')}" target="_blank" rel="noopener" class="profile-card p-4 flex items-start gap-3.5 group"`;
+            return `
+              <a ${attrs}>
+                ${renderCardVisual(item, 'ri-folder-3-line', 'w-10 h-10')}
+                <div class="flex flex-col gap-1 min-w-0">
+                  <h3 class="font-semibold text-[0.95rem] group-hover:text-sky-400 transition-colors">${escHtml(item.title)}</h3>
+                  <p class="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">${escHtml(item.desc)}</p>
+                </div>
+              </a>
+            `;
+          }).join('') : '<p class="text-sm text-[hsl(var(--muted-foreground))]">Chưa có dự án nào được thêm.</p>'}
         </div>
       </section>
     `;

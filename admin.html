@@ -181,14 +181,25 @@
       </section>
 
       <!-- Tab 2: Projects -->
-      <section id="tab-projects" class="tab-panel hidden flex-col gap-3">
+      <section id="tab-projects" class="tab-panel hidden flex-col gap-4">
         <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold text-sky-400">Quản lý thẻ Projects (Link &amp; Hình ảnh)</h2>
+          <h2 class="text-sm font-bold text-sky-400">4 Thẻ Projects Trang Chủ (Link &amp; Ảnh)</h2>
           <button type="button" id="btn-add-project" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
             + Thêm thẻ
           </button>
         </div>
         <div id="projects-list" class="flex flex-col gap-3"></div>
+
+        <div class="border-t border-[hsl(var(--border))] pt-4 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-sky-400">Danh sách Dự Án chi tiết</h2>
+            <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Hiện ra khi khách bấm vào thẻ "Dự án" (/du-an)</p>
+          </div>
+          <button type="button" id="btn-add-myproject" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors shrink-0">
+            + Thêm dự án
+          </button>
+        </div>
+        <div id="myprojects-list" class="flex flex-col gap-3"></div>
       </section>
 
       <!-- Tab 3: Social -->
@@ -209,6 +220,15 @@
           <button type="button" id="btn-add-dns" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
             + Thêm máy chủ
           </button>
+        </div>
+        <div class="profile-card p-3 flex items-center justify-between gap-2">
+          <label for="dns-count-input" class="text-xs font-semibold text-[hsl(var(--foreground))]">Số lượng máy chủ:</label>
+          <div class="flex items-center gap-2">
+            <input id="dns-count-input" type="number" min="1" max="20" class="inp !w-20 text-center" value="3" />
+            <button type="button" id="btn-apply-dns-count" class="rounded-xl bg-sky-500 px-3 py-2 text-xs font-bold text-white hover:bg-sky-400 transition-colors shrink-0">
+              Áp dụng
+            </button>
+          </div>
         </div>
         <div id="dns-list" class="flex flex-col gap-3"></div>
       </section>
@@ -471,6 +491,7 @@
         await githubPutFile(repoPath, b64, `Upload image ${cleanName}`, token);
         config[type][idx].image = `./${repoPath}`;
         if (type === 'projects') renderProjects();
+        else if (type === 'myProjects') renderMyProjects();
         else renderSocial();
         setLog(`✅ Đã up ảnh xong! Nhớ bấm "Lưu & Đẩy Lên Web" bên dưới.`, '#34d399');
         showAdminToast('Upload ảnh thành công!', 'success');
@@ -530,6 +551,29 @@
       `).join('');
     }
 
+    function renderMyProjects() {
+      if (!Array.isArray(config.myProjects)) config.myProjects = [];
+      const box = document.getElementById('myprojects-list');
+      box.innerHTML = config.myProjects.map((p, i) => `
+        <div class="profile-card p-3.5 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-400">Dự án #${i + 1}</span>
+            <button type="button" onclick="config.myProjects.splice(${i},1);renderMyProjects()" class="text-xs text-rose-400 hover:underline">Xóa</button>
+          </div>
+          <input class="inp" placeholder="Tên dự án" value="${(p.title || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].title=this.value" />
+          <input class="inp" placeholder="Mô tả dự án" value="${(p.desc || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].desc=this.value" />
+          <input class="inp" placeholder="Đường link (https://...)" value="${(p.url || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].url=this.value" />
+          <div class="flex gap-2 items-center">
+            <input class="inp flex-1" placeholder="Link ảnh (hoặc để trống dùng icon)" value="${(p.image || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].image=this.value" />
+            <label class="rounded-xl bg-sky-500/15 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0 hover:bg-sky-500/25">
+              Up Ảnh
+              <input type="file" accept="image/*" class="hidden" onchange="uploadImageForItem(this,'myProjects',${i})" />
+            </label>
+          </div>
+        </div>
+      `).join('');
+    }
+
     function renderSocial() {
       const box = document.getElementById('social-list');
       box.innerHTML = config.social.map((s, i) => `
@@ -557,6 +601,8 @@
     }
 
     function renderDns() {
+      const countInp = document.getElementById('dns-count-input');
+      if (countInp) countInp.value = config.dnsServers.length;
       const box = document.getElementById('dns-list');
       box.innerHTML = config.dnsServers.map((d, i) => `
         <div class="profile-card p-3.5 flex flex-col gap-2">
@@ -586,6 +632,7 @@
       document.getElementById('url-dns').value = config.shadowrocketUrls.dns || '';
       document.getElementById('admin-codes').value = (config.adminCodes || []).join(', ');
       renderProjects();
+      renderMyProjects();
       renderSocial();
       renderDns();
     }
@@ -606,8 +653,25 @@
     }
 
     document.getElementById('btn-add-project').addEventListener('click', () => {
-      config.projects.push({ title: 'Dự án mới', desc: 'Mô tả dự án', url: 'https://', icon: 'ri-links-line', image: '', isSpa: false });
+      config.projects.push({ title: 'Thẻ mới', desc: 'Mô tả', url: 'https://', icon: 'ri-links-line', image: '', isSpa: false });
       renderProjects();
+    });
+    document.getElementById('btn-add-myproject').addEventListener('click', () => {
+      if (!Array.isArray(config.myProjects)) config.myProjects = [];
+      config.myProjects.push({ title: 'Dự án mới', desc: 'Mô tả dự án của bạn', url: 'https://', icon: 'ri-folder-3-line', image: '' });
+      renderMyProjects();
+    });
+    document.getElementById('btn-apply-dns-count').addEventListener('click', () => {
+      const target = Math.max(1, Math.min(20, parseInt(document.getElementById('dns-count-input').value, 10) || 1));
+      while (config.dnsServers.length < target) {
+        const num = String(config.dnsServers.length + 1).padStart(2, '0');
+        config.dnsServers.push({ name: `Máy Chủ ${num}`, url: 'https://cloudflare-dns.com/dns-query', fileUrl: '' });
+      }
+      if (config.dnsServers.length > target) {
+        config.dnsServers = config.dnsServers.slice(0, target);
+      }
+      renderDns();
+      showAdminToast(`Đã chỉnh số lượng thành ${target} máy chủ!`, 'success');
     });
     document.getElementById('btn-add-social').addEventListener('click', () => {
       config.social.push({ title: 'Liên kết mới', desc: 'Nhật Tình', url: 'https://', icon: 'ri-share-line', image: '', fullWidth: false });
