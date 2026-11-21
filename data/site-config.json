@@ -57,6 +57,13 @@
       "url": "/locketlam",
       "icon": "ri-shield-flash-line",
       "image": ""
+    },
+    {
+      "title": "KIẾN TẠO XÂY DỰNG SỐ AI",
+      "desc": "Hệ Thống Trợ Lý Kỹ Thuật, Dự Toán Vật Liệu Xanh, Tra Cứu TCVN, Giám Sát An Toàn & Chẩn Đoán Kết Cấu Xây Dựng Thông Minh",
+      "url": "https://dtu-xaydung-ai.surge.sh/",
+      "icon": "ri-folder-3-line",
+      "image": ""
     }
   ],
   "social": [
