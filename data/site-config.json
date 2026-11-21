@@ -109,9 +109,9 @@
     }
   ],
   "shadowrocketUrls": {
-    "conf": "https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.conf",
-    "sgmodule": "https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.sgmodule",
-    "dns": "https://cloudflare-dns.com/dns-query"
+    "conf": "https://raw.githubusercontent.com/nhattinh486-art/Module_IOS/refs/heads/main/Nh%E1%BA%ADt_T%C3%ACnh.conf",
+    "sgmodule": "https://raw.githubusercontent.com/nhattinh486-art/Module_IOS/refs/heads/main/Nh%E1%BA%ADt_T%C3%ACnh.sgmodule",
+    "dns": "https://raw.githubusercontent.com/nhattinh486-art/Module_IOS/refs/heads/main/DNS-Nh%E1%BA%ADt_T%C3%ACnh.mobileconfig"
   },
   "adminCodes": [
     "NHATTINH2026",
