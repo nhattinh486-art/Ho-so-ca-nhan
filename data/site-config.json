@@ -66,6 +66,15 @@
       "image": "",
       "adminUrl": "https://dtu-xaydung-ai.surge.sh/admin.html",
       "githubUrl": "https://github.com/nhattinh486-art/vietbuild-ai-hub"
+    },
+    {
+      "title": "Tự động hóa Autocad",
+      "desc": "Hệ thống tự động hóa vẽ bản vẽ kiến trúc trên AutoCAD từ ảnh mẫu bằng đội AI Agent (Swarm), CAD-MCP và script chuyển đổi JSON sang AutoLISP.",
+      "url": "",
+      "adminUrl": "",
+      "githubUrl": "https://github.com/nhattinh486-art/autocad",
+      "icon": "ri-folder-3-line",
+      "image": ""
     }
   ],
   "social": [
