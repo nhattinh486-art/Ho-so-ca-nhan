@@ -147,7 +147,7 @@ function renderCardVisual(item, defaultIcon, sizeClass) {
 window.SPA_PAGES = {
   home: {
     title: 'Nhật Tình',
-    docTitle: 'Nhật Tình — Đơn Giản • Hiệu Quả • Khác Biệt • Sáng Tạo Không Giới Hạn',
+    docTitle: 'Hồ Sơ-Nhật Tình',
     render: () => {
       const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
       const bio = cfg.bio || window.DEFAULT_SITE_CONFIG.bio;
