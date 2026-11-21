@@ -27,194 +27,329 @@
     };
   </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script>
   <style>
-    html, body, button, input, textarea, select {
-      font-family: 'Times New Roman', Times, serif !important;
-    }
     body {
-      background: #0b0b10;
-      color: #f8fafc;
-      padding-bottom: 92px;
-    }
-    .card {
-      background: rgba(24, 24, 32, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.22);
-      border-radius: 1rem;
+      padding-bottom: 96px;
     }
     .inp {
       width: 100%;
-      background: rgba(11, 11, 16, 0.85);
-      border: 1px solid rgba(148, 163, 184, 0.25);
+      background-color: hsl(var(--background) / 0.72);
+      border: 1px solid hsl(var(--border));
       border-radius: 0.75rem;
-      padding: 0.6rem 0.8rem;
+      padding: 0.6rem 0.85rem;
       font-size: 0.9rem;
-      color: #f8fafc;
+      color: hsl(var(--foreground));
       outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .inp:focus {
       border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
+    }
+    .tab-btn {
+      background-color: hsl(var(--primary-foreground) / 0.65);
+      border: 1px solid hsl(var(--border));
+      color: hsl(var(--muted-foreground));
+      transition: all 0.22s ease;
     }
     .tab-btn.active {
-      background: rgba(56, 189, 248, 0.2);
+      background-color: rgba(56, 189, 248, 0.16);
       color: #38bdf8;
-      border-color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.7);
+      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.15);
+    }
+    .tab-panel {
+      animation: pageEnter 0.28s ease forwards;
+    }
+    .admin-bottom-bar {
+      background-color: hsl(var(--background) / 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid hsl(var(--border));
     }
   </style>
 </head>
-<body class="min-h-screen antialiased">
+<body class="relative min-h-screen antialiased selection:bg-sky-500/30 selection:text-sky-300">
 
-  <!-- Top Bar -->
-  <header class="sticky top-0 z-30 border-b border-sky-500/20 bg-[#0b0b10]/95 backdrop-blur-md px-4 py-3">
-    <div class="mx-auto flex max-w-2xl items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5">
-        <img src="./assets/img/avatar.jpg" alt="Avatar" class="h-9 w-9 rounded-full border border-sky-400 object-cover" />
+  <!-- Top Ocean Gradient Backdrop -->
+  <div
+    class="pointer-events-none absolute start-0 top-0 z-0 h-1/2 w-full opacity-40"
+    style="background: linear-gradient(#0284c755, transparent);"
+  ></div>
+
+  <!-- Toast Container -->
+  <div id="admin-toast-container" class="lam-toast-container"></div>
+
+  <!-- Main Container -->
+  <div class="relative z-10 mx-auto max-w-2xl px-4 pt-4">
+
+    <!-- Sticky Glass Header -->
+    <header
+      id="main-header"
+      class="not-top sticky top-4 z-30 mb-6 flex items-center justify-between rounded-2xl border border-[hsl(var(--border))] px-4 py-2.5"
+    >
+      <div class="flex items-center gap-3">
+        <div class="relative h-10 w-10 flex items-center justify-center shrink-0">
+          <img src="./assets/img/avatar.jpg" alt="Avatar" class="h-9 w-9 rounded-full border border-sky-400/70 object-cover" />
+          <svg class="crown3" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="100" cy="100" r="88" stroke="#38bdf8" stroke-width="3" stroke-dasharray="14 8" />
+          </svg>
+        </div>
         <div>
-          <h1 class="text-base font-bold text-sky-400 leading-tight">Nhật Tình Admin</h1>
-          <p class="text-[11px] text-slate-400">Quản lý nội dung, link, ảnh &amp; file</p>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">
+            <span class="magic">
+              <span class="magic-star">
+                <svg viewBox="0 0 512 512"><path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z"/></svg>
+              </span>
+              <span class="magic-star">
+                <svg viewBox="0 0 512 512"><path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z"/></svg>
+              </span>
+              <span class="magic-text">Nhật Tình Admin</span>
+            </span>
+          </h1>
+          <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Quản lý nội dung, link, ảnh &amp; file</p>
         </div>
       </div>
-      <a href="./index.html" target="_blank" class="rounded-xl border border-sky-500/40 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-400">
-        <i class="ri-external-link-line mr-1"></i>Xem Web
-      </a>
-    </div>
-  </header>
 
-  <main class="mx-auto max-w-2xl px-4 pt-4 flex flex-col gap-4">
-
-    <!-- GitHub Connection Card -->
-    <section class="card p-4 flex flex-col gap-2.5">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-bold text-sky-400 flex items-center gap-1.5">
-          <i class="ri-github-fill text-lg"></i> Kết nối GitHub (để lưu cho mọi người cùng thấy)
-        </h2>
-        <span id="token-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400">Chưa nhập Token</span>
-      </div>
-      <div class="flex gap-2">
-        <input id="gh-token" type="password" class="inp flex-1" placeholder="Dán GitHub Token (ghp_... hoặc github_pat_...)" />
-        <button type="button" id="btn-save-token" class="rounded-xl bg-sky-500 px-3.5 py-2 text-xs font-bold text-white shrink-0">
-          Lưu Token
+      <div class="flex items-center gap-1.5">
+        <button
+          type="button"
+          class="change-theme flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))/0.6] text-lg hover:border-sky-400 hover:text-sky-400 transition-colors"
+          aria-label="Đổi giao diện Sáng / Tối"
+          title="Đổi giao diện Sáng / Tối"
+        >
+          <i class="ri-sun-line"></i>
         </button>
+        <a href="./index.html" target="_blank" class="inline-flex items-center gap-1 rounded-xl border border-sky-500/40 bg-sky-500/10 px-3 py-2 text-xs font-semibold text-sky-400 hover:bg-sky-500/20 transition-colors">
+          <i class="ri-external-link-line"></i>
+          <span>Xem Web</span>
+        </a>
       </div>
-      <details class="text-xs text-slate-400">
-        <summary class="cursor-pointer text-sky-400">Cách lấy GitHub Token miễn phí (làm 1 lần trên điện thoại)</summary>
-        <ol class="list-decimal pl-5 mt-1.5 space-y-1">
-          <li>Vào <b>github.com/settings/tokens</b> → <b>Generate new token (classic)</b>.</li>
-          <li>Đặt tên bất kỳ, chọn Expiration <b>No expiration</b>, tích ô <b>repo</b>.</li>
-          <li>Bấm <b>Generate token</b>, copy mã dán vào ô trên rồi bấm <b>Lưu Token</b>.</li>
-        </ol>
-      </details>
-    </section>
+    </header>
 
-    <!-- Tabs -->
-    <nav class="flex gap-1.5 overflow-x-auto pb-1">
-      <button type="button" class="tab-btn active rounded-xl border border-slate-700 px-3 py-2 text-xs font-bold shrink-0" data-tab="bio">1. Bio</button>
-      <button type="button" class="tab-btn rounded-xl border border-slate-700 px-3 py-2 text-xs font-bold shrink-0" data-tab="projects">2. Projects</button>
-      <button type="button" class="tab-btn rounded-xl border border-slate-700 px-3 py-2 text-xs font-bold shrink-0" data-tab="social">3. Social</button>
-      <button type="button" class="tab-btn rounded-xl border border-slate-700 px-3 py-2 text-xs font-bold shrink-0" data-tab="dns">4. Locket DNS</button>
-      <button type="button" class="tab-btn rounded-xl border border-slate-700 px-3 py-2 text-xs font-bold shrink-0" data-tab="urls">5. URL &amp; Mã</button>
-    </nav>
+    <main class="flex flex-col gap-4">
+      <!-- GitHub Connection Card -->
+      <section class="profile-card p-4 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-sky-400 flex items-center gap-1.5">
+            <i class="ri-github-fill text-lg"></i> Kết nối GitHub (để lưu cho mọi người cùng thấy)
+          </h2>
+          <span id="token-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold">Chưa nhập Token</span>
+        </div>
+        <div class="flex gap-2">
+          <input id="gh-token" type="password" class="inp flex-1" placeholder="Dán GitHub Token (ghp_... hoặc github_pat_...)" />
+          <button type="button" id="btn-save-token" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3.5 py-2 text-xs font-bold text-white shrink-0 transition-colors shadow-md shadow-sky-500/20">
+            Lưu Token
+          </button>
+        </div>
+        <details class="text-xs text-[hsl(var(--muted-foreground))]">
+          <summary class="cursor-pointer text-sky-400 font-medium">Cách lấy GitHub Token miễn phí (làm 1 lần trên điện thoại)</summary>
+          <ol class="list-decimal pl-5 mt-1.5 space-y-1">
+            <li>Vào <b>github.com/settings/tokens</b> → <b>Generate new token (classic)</b>.</li>
+            <li>Đặt tên bất kỳ, chọn Expiration <b>No expiration</b>, tích ô <b>repo</b>.</li>
+            <li>Bấm <b>Generate token</b>, copy mã dán vào ô trên rồi bấm <b>Lưu Token</b>.</li>
+          </ol>
+        </details>
+      </section>
 
-    <!-- Tab 1: Bio -->
-    <section id="tab-bio" class="tab-panel card p-4 flex flex-col gap-3">
-      <h2 class="text-sm font-bold text-sky-400">Chỉnh sửa Bio (Trang chủ)</h2>
-      <div>
-        <label class="text-xs text-slate-300 mb-1 block">Tên hiển thị trên Bio</label>
-        <input id="bio-subtitle" type="text" class="inp" />
-      </div>
-      <div>
-        <label class="text-xs text-slate-300 mb-1 block">Đoạn giới thiệu 1</label>
-        <textarea id="bio-p1" rows="3" class="inp"></textarea>
-      </div>
-      <div>
-        <label class="text-xs text-slate-300 mb-1 block">Đoạn giới thiệu 2</label>
-        <textarea id="bio-p2" rows="2" class="inp"></textarea>
-      </div>
-    </section>
+      <!-- Tabs -->
+      <nav class="flex gap-2 overflow-x-auto pb-1">
+        <button type="button" class="tab-btn active rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="bio">1. Bio</button>
+        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="projects">2. Projects</button>
+        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="social">3. Social</button>
+        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="dns">4. Locket DNS</button>
+        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="urls">5. URL &amp; Mã</button>
+      </nav>
 
-    <!-- Tab 2: Projects -->
-    <section id="tab-projects" class="tab-panel hidden flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-bold text-sky-400">Quản lý thẻ Projects (Link &amp; Hình ảnh)</h2>
-        <button type="button" id="btn-add-project" class="rounded-lg bg-sky-500/20 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400">
-          + Thêm thẻ
-        </button>
-      </div>
-      <div id="projects-list" class="flex flex-col gap-3"></div>
-    </section>
+      <!-- Tab 1: Bio -->
+      <section id="tab-bio" class="tab-panel profile-card p-4 flex flex-col gap-3">
+        <h2 class="text-sm font-bold text-sky-400">Chỉnh sửa Bio (Trang chủ)</h2>
+        <div>
+          <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Tên hiển thị trên Bio</label>
+          <input id="bio-subtitle" type="text" class="inp" />
+        </div>
+        <div>
+          <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Đoạn giới thiệu 1</label>
+          <textarea id="bio-p1" rows="3" class="inp"></textarea>
+        </div>
+        <div>
+          <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Đoạn giới thiệu 2</label>
+          <textarea id="bio-p2" rows="2" class="inp"></textarea>
+        </div>
+      </section>
 
-    <!-- Tab 3: Social -->
-    <section id="tab-social" class="tab-panel hidden flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-bold text-sky-400">Quản lý thẻ Social (Link &amp; Hình ảnh)</h2>
-        <button type="button" id="btn-add-social" class="rounded-lg bg-sky-500/20 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400">
-          + Thêm thẻ
-        </button>
-      </div>
-      <div id="social-list" class="flex flex-col gap-3"></div>
-    </section>
+      <!-- Tab 2: Projects -->
+      <section id="tab-projects" class="tab-panel hidden flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-sky-400">Quản lý thẻ Projects (Link &amp; Hình ảnh)</h2>
+          <button type="button" id="btn-add-project" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+            + Thêm thẻ
+          </button>
+        </div>
+        <div id="projects-list" class="flex flex-col gap-3"></div>
+      </section>
 
-    <!-- Tab 4: Locket DNS -->
-    <section id="tab-dns" class="tab-panel hidden flex-col gap-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-bold text-sky-400">Quản lý Locket DNS &amp; File Hồ Sơ</h2>
-        <button type="button" id="btn-add-dns" class="rounded-lg bg-sky-500/20 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400">
-          + Thêm máy chủ
-        </button>
-      </div>
-      <div id="dns-list" class="flex flex-col gap-3"></div>
-    </section>
+      <!-- Tab 3: Social -->
+      <section id="tab-social" class="tab-panel hidden flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-sky-400">Quản lý thẻ Social (Link &amp; Hình ảnh)</h2>
+          <button type="button" id="btn-add-social" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+            + Thêm thẻ
+          </button>
+        </div>
+        <div id="social-list" class="flex flex-col gap-3"></div>
+      </section>
 
-    <!-- Tab 5: Shadowrocket URLs & Admin Codes -->
-    <section id="tab-urls" class="tab-panel hidden card p-4 flex-col gap-4">
-      <h2 class="text-sm font-bold text-sky-400">Quản lý 3 URL (Shadowrocket / DNS)</h2>
+      <!-- Tab 4: Locket DNS -->
+      <section id="tab-dns" class="tab-panel hidden flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-sky-400">Quản lý Locket DNS &amp; File Hồ Sơ</h2>
+          <button type="button" id="btn-add-dns" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+            + Thêm máy chủ
+          </button>
+        </div>
+        <div id="dns-list" class="flex flex-col gap-3"></div>
+      </section>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-slate-300">1. Link .conf (hoặc up file .conf lên)</label>
-        <input id="url-conf" type="text" class="inp" />
-        <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer">
-          <i class="ri-upload-2-line"></i>
-          <span>Chọn file .conf từ điện thoại</span>
-          <input type="file" accept=".conf,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-conf', 'conf')" />
-        </label>
-      </div>
+      <!-- Tab 5: Shadowrocket URLs & Admin Codes -->
+      <section id="tab-urls" class="tab-panel hidden profile-card p-4 flex-col gap-4">
+        <h2 class="text-sm font-bold text-sky-400">Quản lý 3 URL (Shadowrocket / DNS)</h2>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-slate-300">2. Link .sgmodule (hoặc up file .sgmodule lên)</label>
-        <input id="url-sgmodule" type="text" class="inp" />
-        <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer">
-          <i class="ri-upload-2-line"></i>
-          <span>Chọn file .sgmodule từ điện thoại</span>
-          <input type="file" accept=".sgmodule,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-sgmodule', 'sgmodule')" />
-        </label>
-      </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-[hsl(var(--foreground))]">1. Link .conf (hoặc up file .conf lên)</label>
+          <input id="url-conf" type="text" class="inp" />
+          <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer w-fit hover:underline">
+            <i class="ri-upload-2-line"></i>
+            <span>Chọn file .conf từ điện thoại</span>
+            <input type="file" accept=".conf,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-conf', 'conf')" />
+          </label>
+        </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-slate-300">3. Link DNS (DoH)</label>
-        <input id="url-dns" type="text" class="inp" />
-      </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-[hsl(var(--foreground))]">2. Link .sgmodule (hoặc up file .sgmodule lên)</label>
+          <input id="url-sgmodule" type="text" class="inp" />
+          <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer w-fit hover:underline">
+            <i class="ri-upload-2-line"></i>
+            <span>Chọn file .sgmodule từ điện thoại</span>
+            <input type="file" accept=".sgmodule,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-sgmodule', 'sgmodule')" />
+          </label>
+        </div>
 
-      <div class="border-t border-slate-700 pt-3 flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-sky-400">Mã do Admin cung cấp (cách nhau bởi dấu phẩy)</label>
-        <input id="admin-codes" type="text" class="inp" placeholder="NHATTINH2026, LOCKETGOLD, ADMIN" />
-      </div>
-    </section>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-[hsl(var(--foreground))]">3. Link DNS (DoH)</label>
+          <input id="url-dns" type="text" class="inp" />
+        </div>
 
-    <div id="admin-log" class="text-xs text-center text-sky-300 min-h-[1.25rem]"></div>
-  </main>
+        <div class="border-t border-[hsl(var(--border))] pt-3 flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-sky-400">Mã do Admin cung cấp (cách nhau bởi dấu phẩy)</label>
+          <input id="admin-codes" type="text" class="inp" placeholder="NHATTINH2026, LOCKETGOLD, ADMIN" />
+        </div>
+      </section>
+
+      <div id="admin-log" class="text-xs text-center text-sky-400 min-h-[1.25rem]"></div>
+    </main>
+  </div>
 
   <!-- Fixed Bottom Save Bar -->
-  <div class="fixed bottom-0 inset-x-0 z-40 border-t border-sky-500/25 bg-[#0b0b10]/95 backdrop-blur-md px-4 py-3">
+  <div class="admin-bottom-bar fixed bottom-0 inset-x-0 z-40 px-4 py-3">
     <div class="mx-auto flex max-w-2xl items-center gap-2.5">
-      <button type="button" id="btn-preview-local" class="rounded-xl border border-slate-600 px-3.5 py-2.5 text-xs font-bold text-slate-200 shrink-0">
+      <button type="button" id="btn-preview-local" class="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))] px-3.5 py-2.5 text-xs font-bold hover:border-sky-400 hover:text-sky-400 shrink-0 transition-colors">
         Lưu Thử Máy Này
       </button>
-      <button type="button" id="btn-publish-github" class="flex-1 rounded-xl bg-sky-500 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-sky-500/25">
+      <button type="button" id="btn-publish-github" class="flex-1 rounded-xl bg-sky-500 hover:bg-sky-400 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-sky-500/25 transition-all">
         <i class="ri-upload-cloud-2-line mr-1"></i> Lưu &amp; Đẩy Lên Web
       </button>
     </div>
   </div>
 
+  <!-- Real-time Clock & Sakura Canvas -->
+  <div id="real-time" style="bottom: 4.5rem;">00:00:00</div>
+  <canvas id="canvas_sakura"></canvas>
+
+  <script src="./assets/js/addons/cursor-magic.js"></script>
   <script>
+    // ===== Theme Sync =====
+    const htmlEl = document.documentElement;
+    function applyAdminTheme(theme) {
+      if (theme === 'light') htmlEl.classList.remove('dark');
+      else htmlEl.classList.add('dark');
+      const ic = document.querySelector('.change-theme i');
+      if (ic) ic.className = theme === 'light' ? 'ri-moon-clear-line' : 'ri-sun-line';
+    }
+    applyAdminTheme(localStorage.getItem('lamdev_theme') || 'dark');
+    document.querySelector('.change-theme').addEventListener('click', () => {
+      const next = htmlEl.classList.contains('dark') ? 'light' : 'dark';
+      applyAdminTheme(next);
+      localStorage.setItem('lamdev_theme', next);
+    });
+
+    // ===== Magic Stars Animation =====
+    const randR = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    function animStar(star) {
+      star.style.setProperty('--star-left', `${randR(-10, 100)}%`);
+      star.style.setProperty('--star-top', `${randR(-40, 80)}%`);
+      star.style.animation = 'none';
+      star.offsetHeight;
+      star.style.animation = '';
+    }
+    let sIdx = 0;
+    for (const st of document.getElementsByClassName('magic-star')) {
+      setTimeout(() => { animStar(st); setInterval(() => animStar(st), 1000); }, sIdx++ * 333);
+    }
+
+    // ===== Sakura Petals =====
+    const sakCanvas = document.getElementById('canvas_sakura');
+    if (sakCanvas) {
+      const ctx = sakCanvas.getContext('2d');
+      let sw = (sakCanvas.width = window.innerWidth);
+      let sh = (sakCanvas.height = window.innerHeight);
+      window.addEventListener('resize', () => { sw = sakCanvas.width = window.innerWidth; sh = sakCanvas.height = window.innerHeight; });
+      const petals = Array.from({ length: 8 }, () => ({
+        x: Math.random() * sw, y: Math.random() * sh,
+        size: Math.random() * 7 + 6, sy: Math.random() * 1 + 0.6,
+        sx: Math.random() * 0.7 - 0.3, a: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.04
+      }));
+      (function loop() {
+        ctx.clearRect(0, 0, sw, sh);
+        petals.forEach((p) => {
+          p.y += p.sy; p.x += p.sx + Math.sin(p.y * 0.012) * 0.35; p.a += p.spin;
+          if (p.y > sh + 20) { p.y = -20; p.x = Math.random() * sw; }
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+          ctx.globalAlpha = 0.55; ctx.fillStyle = '#fbcfe8';
+          ctx.beginPath();
+          ctx.moveTo(0, -p.size / 2);
+          ctx.bezierCurveTo(p.size / 2, -p.size / 2, p.size / 2, p.size / 2, 0, p.size / 2);
+          ctx.bezierCurveTo(-p.size / 2, p.size / 2, -p.size / 2, -p.size / 2, 0, -p.size / 2);
+          ctx.fill(); ctx.restore();
+        });
+        requestAnimationFrame(loop);
+      })();
+    }
+
+    // ===== Real-time Clock =====
+    const rtEl = document.getElementById('real-time');
+    function tickClock() {
+      const d = new Date();
+      rtEl.textContent = [d.getHours(), d.getMinutes(), d.getSeconds()].map((n) => String(n).padStart(2, '0')).join(':');
+    }
+    tickClock();
+    setInterval(tickClock, 1000);
+
+    // ===== Toast Helper =====
+    function showAdminToast(msg, type = 'info') {
+      const box = document.getElementById('admin-toast-container');
+      const icons = { success: ['ri-checkbox-circle-fill', '#34d399'], error: ['ri-close-circle-fill', '#f87171'], info: ['ri-information-fill', '#38bdf8'] };
+      const [ic, col] = icons[type] || icons.info;
+      const el = document.createElement('div');
+      el.className = 'lam-toast';
+      el.innerHTML = `<i class="${ic}" style="color:${col};font-size:1.05rem;"></i><span>${msg}</span>`;
+      box.appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-8px)'; setTimeout(() => el.remove(), 250); }, 2800);
+    }
+
+    // ===== Admin Logic =====
     const REPO_OWNER = 'nhattinh486-art';
     const REPO_NAME = 'nhattinh486-art.github.io';
     const CONFIG_PATH = 'data/site-config.json';
@@ -225,7 +360,7 @@
     const tokenInput = document.getElementById('gh-token');
     const tokenBadge = document.getElementById('token-badge');
 
-    function setLog(msg, color = '#7dd3fc') {
+    function setLog(msg, color = '#38bdf8') {
       logEl.style.color = color;
       logEl.textContent = msg;
     }
@@ -235,7 +370,7 @@
       if (t) {
         tokenInput.value = t;
         tokenBadge.textContent = 'Đã lưu Token';
-        tokenBadge.className = 'text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400';
+        tokenBadge.className = 'text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold';
       }
     }
 
@@ -244,15 +379,16 @@
       if (!val) {
         localStorage.removeItem('gh_admin_token');
         tokenBadge.textContent = 'Đã xóa Token';
-        tokenBadge.className = 'text-[11px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400';
+        tokenBadge.className = 'text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold';
+        showAdminToast('Đã xóa Token khỏi máy!', 'info');
         return;
       }
       localStorage.setItem('gh_admin_token', val);
       updateTokenBadge();
       setLog('✅ Đã lưu GitHub Token vào máy!', '#34d399');
+      showAdminToast('Đã lưu GitHub Token!', 'success');
     });
 
-    // Tab switching
     document.querySelectorAll('.tab-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
@@ -266,7 +402,6 @@
       });
     });
 
-    // GitHub API Helpers
     function toBase64Utf8(str) {
       return btoa(unescape(encodeURIComponent(str)));
     }
@@ -314,7 +449,7 @@
       if (!file) return;
       const token = localStorage.getItem('gh_admin_token') || tokenInput.value.trim();
       if (!token) {
-        alert('Vui lòng nhập và Lưu GitHub Token ở trên trước khi up ảnh lên web!');
+        showAdminToast('Vui lòng nhập GitHub Token ở trên trước khi up ảnh!', 'error');
         return;
       }
       try {
@@ -323,13 +458,14 @@
         const cleanName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
         const repoPath = `uploads/${cleanName}`;
         await githubPutFile(repoPath, b64, `Upload image ${cleanName}`, token);
-        const publicUrl = `./${repoPath}`;
-        config[type][idx].image = publicUrl;
+        config[type][idx].image = `./${repoPath}`;
         if (type === 'projects') renderProjects();
         else renderSocial();
         setLog(`✅ Đã up ảnh xong! Nhớ bấm "Lưu & Đẩy Lên Web" bên dưới.`, '#34d399');
+        showAdminToast('Upload ảnh thành công!', 'success');
       } catch (e) {
         setLog(`❌ Lỗi up ảnh: ${e.message}`, '#f87171');
+        showAdminToast(e.message, 'error');
       }
     };
 
@@ -338,7 +474,7 @@
       if (!file) return;
       const token = localStorage.getItem('gh_admin_token') || tokenInput.value.trim();
       if (!token) {
-        alert('Vui lòng nhập và Lưu GitHub Token ở trên trước khi up file!');
+        showAdminToast('Vui lòng nhập GitHub Token ở trên trước khi up file!', 'error');
         return;
       }
       try {
@@ -347,33 +483,34 @@
         const cleanName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
         const repoPath = `uploads/${folderPrefix}-${cleanName}`;
         await githubPutFile(repoPath, b64, `Upload file ${cleanName}`, token);
-        const fullUrl = `${SITE_ORIGIN}/${repoPath}`;
         if (dnsIdx !== null) {
           config.dnsServers[dnsIdx].fileUrl = `./${repoPath}`;
           renderDns();
         } else {
-          document.getElementById(targetInputId).value = fullUrl;
+          document.getElementById(targetInputId).value = `${SITE_ORIGIN}/${repoPath}`;
         }
         setLog(`✅ Đã up file xong! Nhớ bấm "Lưu & Đẩy Lên Web" bên dưới.`, '#34d399');
+        showAdminToast('Upload file thành công!', 'success');
       } catch (e) {
         setLog(`❌ Lỗi up file: ${e.message}`, '#f87171');
+        showAdminToast(e.message, 'error');
       }
     };
 
     function renderProjects() {
       const box = document.getElementById('projects-list');
       box.innerHTML = config.projects.map((p, i) => `
-        <div class="card p-3.5 flex flex-col gap-2">
+        <div class="profile-card p-3.5 flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-sky-400">Thẻ #${i + 1}</span>
-            <button type="button" onclick="config.projects.splice(${i},1);renderProjects()" class="text-xs text-rose-400">Xóa</button>
+            <button type="button" onclick="config.projects.splice(${i},1);renderProjects()" class="text-xs text-rose-400 hover:underline">Xóa</button>
           </div>
           <input class="inp" placeholder="Tên thẻ (VD: Facebook)" value="${(p.title || '').replace(/"/g, '&quot;')}" oninput="config.projects[${i}].title=this.value" />
           <input class="inp" placeholder="Mô tả ngắn" value="${(p.desc || '').replace(/"/g, '&quot;')}" oninput="config.projects[${i}].desc=this.value" />
           <input class="inp" placeholder="Đường link (https://... hoặc /locketlam)" value="${(p.url || '').replace(/"/g, '&quot;')}" oninput="config.projects[${i}].url=this.value;config.projects[${i}].isSpa=this.value.startsWith('/')" />
           <div class="flex gap-2 items-center">
             <input class="inp flex-1" placeholder="Link ảnh (hoặc để trống dùng icon)" value="${(p.image || '').replace(/"/g, '&quot;')}" oninput="config.projects[${i}].image=this.value" />
-            <label class="rounded-xl bg-sky-500/20 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0">
+            <label class="rounded-xl bg-sky-500/15 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0 hover:bg-sky-500/25">
               Up Ảnh
               <input type="file" accept="image/*" class="hidden" onchange="uploadImageForItem(this,'projects',${i})" />
             </label>
@@ -385,22 +522,22 @@
     function renderSocial() {
       const box = document.getElementById('social-list');
       box.innerHTML = config.social.map((s, i) => `
-        <div class="card p-3.5 flex flex-col gap-2">
+        <div class="profile-card p-3.5 flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-sky-400">Thẻ Social #${i + 1}</span>
-            <button type="button" onclick="config.social.splice(${i},1);renderSocial()" class="text-xs text-rose-400">Xóa</button>
+            <button type="button" onclick="config.social.splice(${i},1);renderSocial()" class="text-xs text-rose-400 hover:underline">Xóa</button>
           </div>
           <input class="inp" placeholder="Tên mạng xã hội" value="${(s.title || '').replace(/"/g, '&quot;')}" oninput="config.social[${i}].title=this.value" />
           <input class="inp" placeholder="Mô tả / ID" value="${(s.desc || '').replace(/"/g, '&quot;')}" oninput="config.social[${i}].desc=this.value" />
           <input class="inp" placeholder="Đường link (https://...)" value="${(s.url || '').replace(/"/g, '&quot;')}" oninput="config.social[${i}].url=this.value" />
           <div class="flex gap-2 items-center">
             <input class="inp flex-1" placeholder="Link ảnh (hoặc để trống dùng icon)" value="${(s.image || '').replace(/"/g, '&quot;')}" oninput="config.social[${i}].image=this.value" />
-            <label class="rounded-xl bg-sky-500/20 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0">
+            <label class="rounded-xl bg-sky-500/15 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0 hover:bg-sky-500/25">
               Up Ảnh
               <input type="file" accept="image/*" class="hidden" onchange="uploadImageForItem(this,'social',${i})" />
             </label>
           </div>
-          <label class="flex items-center gap-2 text-xs text-slate-300">
+          <label class="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]">
             <input type="checkbox" ${s.fullWidth ? 'checked' : ''} onchange="config.social[${i}].fullWidth=this.checked" />
             Hiển thị rộng toàn hàng (2 cột)
           </label>
@@ -411,16 +548,16 @@
     function renderDns() {
       const box = document.getElementById('dns-list');
       box.innerHTML = config.dnsServers.map((d, i) => `
-        <div class="card p-3.5 flex flex-col gap-2">
+        <div class="profile-card p-3.5 flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-sky-400">Máy Chủ #${i + 1}</span>
-            <button type="button" onclick="config.dnsServers.splice(${i},1);renderDns()" class="text-xs text-rose-400">Xóa</button>
+            <button type="button" onclick="config.dnsServers.splice(${i},1);renderDns()" class="text-xs text-rose-400 hover:underline">Xóa</button>
           </div>
           <input class="inp" placeholder="Tên máy chủ (VD: Máy Chủ 01)" value="${(d.name || '').replace(/"/g, '&quot;')}" oninput="config.dnsServers[${i}].name=this.value" />
           <input class="inp" placeholder="Link DNS DoH (https://...)" value="${(d.url || '').replace(/"/g, '&quot;')}" oninput="config.dnsServers[${i}].url=this.value" />
           <div class="flex gap-2 items-center">
             <input class="inp flex-1" placeholder="Link file .mobileconfig riêng (để trống = tự tạo)" value="${(d.fileUrl || '').replace(/"/g, '&quot;')}" oninput="config.dnsServers[${i}].fileUrl=this.value" />
-            <label class="rounded-xl bg-sky-500/20 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0">
+            <label class="rounded-xl bg-sky-500/15 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0 hover:bg-sky-500/25">
               Up File
               <input type="file" accept=".mobileconfig,.xml,.conf" class="hidden" onchange="uploadFileToRepo(this,'','dns',${i})" />
             </label>
@@ -473,13 +610,14 @@
     document.getElementById('btn-preview-local').addEventListener('click', () => {
       collectForm();
       localStorage.setItem('site_config_preview', JSON.stringify(config));
-      setLog('✅ Đã lưu xem thử trên máy này! Bấm "Xem Web" ở góc trên phải để kiểm tra.', '#34d399');
+      setLog('✅ Đã lưu xem thử trên máy này! Bấm "Xem Web" để kiểm tra.', '#34d399');
+      showAdminToast('Đã lưu bản xem thử trên máy này!', 'success');
     });
 
     document.getElementById('btn-publish-github').addEventListener('click', async () => {
       const token = localStorage.getItem('gh_admin_token') || tokenInput.value.trim();
       if (!token) {
-        alert('Vui lòng nhập GitHub Token ở mục "Kết nối GitHub" phía trên để lưu lên web!');
+        showAdminToast('Vui lòng nhập GitHub Token để lưu lên web!', 'error');
         return;
       }
       collectForm();
@@ -489,12 +627,13 @@
         await githubPutFile(CONFIG_PATH, toBase64Utf8(jsonStr), 'Update site config from Mobile Admin', token);
         localStorage.removeItem('site_config_preview');
         setLog('🎉 Đã cập nhật thành công! Web sẽ hiển thị bản mới sau ~20-30 giây.', '#34d399');
+        showAdminToast('Đã đẩy cấu hình mới lên web!', 'success');
       } catch (e) {
         setLog(`❌ Lỗi khi lưu lên GitHub: ${e.message}`, '#f87171');
+        showAdminToast(e.message, 'error');
       }
     });
 
-    // Load initial config
     (async function init() {
       updateTokenBadge();
       try {
