@@ -1,0 +1,112 @@
+{
+  "bio": {
+    "subtitle": "Nhật Tình",
+    "paragraphs": [
+      "Mình là Nhật Tình — Lập trình viên Full-Stack. Chuyên môn chính tập trung vào phát triển hệ thống Back-end phân tán, thiết kế RESTful API hiệu năng cao và lập trình các giải pháp tự động hóa (Automation Bot, Cloudflare Serverless).",
+      "Định hướng làm việc thực chiến: luôn đặt tính bảo mật, tốc độ xử lý và khả năng mở rộng ổn định của sản phẩm lên hàng đầu."
+    ]
+  },
+  "projects": [
+    {
+      "title": "Facebook",
+      "desc": "Trang cá nhân Facebook chính thức — kết nối, giao lưu và hỗ trợ trực tiếp.",
+      "url": "https://facebook.com",
+      "icon": "ri-facebook-circle-line",
+      "image": "",
+      "isSpa": false,
+      "spaRoute": ""
+    },
+    {
+      "title": "GitHub",
+      "desc": "Kho lưu trữ mã nguồn mở, công cụ tự động hóa và các dự án cá nhân.",
+      "url": "https://github.com",
+      "icon": "ri-github-line",
+      "image": "",
+      "isSpa": false,
+      "spaRoute": ""
+    },
+    {
+      "title": "LocketGold",
+      "desc": "Trung tâm máy chủ DoH & tải cấu hình Locket Gold VIP vĩnh viễn.",
+      "url": "/locketlam",
+      "icon": "ri-shield-flash-line",
+      "image": "",
+      "isSpa": true,
+      "spaRoute": "locketlam"
+    },
+    {
+      "title": "Dự án",
+      "desc": "Tổng hợp các sản phẩm phần mềm, website và giải pháp kỹ thuật đã triển khai.",
+      "url": "/info",
+      "icon": "ri-folder-3-line",
+      "image": "",
+      "isSpa": true,
+      "spaRoute": "info"
+    }
+  ],
+  "social": [
+    {
+      "title": "TikTok",
+      "desc": "@nhattinh",
+      "url": "https://tiktok.com",
+      "icon": "ri-tiktok-line",
+      "image": "",
+      "fullWidth": false
+    },
+    {
+      "title": "GitHub",
+      "desc": "nhattinh",
+      "url": "https://github.com",
+      "icon": "ri-github-line",
+      "image": "",
+      "fullWidth": false
+    },
+    {
+      "title": "Zalo",
+      "desc": "Nhật Tình",
+      "url": "https://zalo.me",
+      "icon": "ri-chat-3-line",
+      "image": "",
+      "fullWidth": false
+    },
+    {
+      "title": "WeChat",
+      "desc": "Nhật Tình",
+      "url": "https://www.wechat.com",
+      "icon": "ri-wechat-line",
+      "image": "",
+      "fullWidth": false
+    },
+    {
+      "title": "Facebook",
+      "desc": "Trang cá nhân Nhật Tình — Hỗ trợ & kết nối",
+      "url": "https://facebook.com",
+      "icon": "ri-facebook-circle-line",
+      "image": "",
+      "fullWidth": true
+    }
+  ],
+  "dnsServers": [
+    {
+      "name": "Máy Chủ 01",
+      "url": "https://cloudflare-dns.com/dns-query",
+      "fileUrl": ""
+    },
+    {
+      "name": "Máy Chủ 02",
+      "url": "https://dns.google/dns-query",
+      "fileUrl": ""
+    },
+    {
+      "name": "Máy Chủ 03",
+      "url": "https://dns.quad9.net/dns-query",
+      "fileUrl": ""
+    }
+  ],
+  "shadowrocketUrls": {
+    "conf": "https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.conf",
+    "sgmodule": "https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.sgmodule",
+    "dns": "https://cloudflare-dns.com/dns-query"
+  },
+  "adminCodes": ["NHATTINH2026", "LOCKETGOLD", "ADMIN"]
+}

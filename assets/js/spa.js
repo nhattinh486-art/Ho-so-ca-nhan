@@ -83,15 +83,40 @@
     const initialKey = isFileProtocol
       ? resolveRouteKey(window.location.hash)
       : resolveRouteKey(window.location.pathname);
-    const pages = window.SPA_PAGES || {};
-    const page = pages[initialKey] || pages.home;
-    if (page && pageContainer) {
-      pageContainer.innerHTML = page.render();
-      if (headerTitleEl) headerTitleEl.textContent = page.title;
-      document.title = page.docTitle;
-      if (typeof window.onSpaPageLoaded === 'function') {
-        window.onSpaPageLoaded(initialKey);
+
+    function renderInitial(key) {
+      const pages = window.SPA_PAGES || {};
+      const page = pages[key] || pages.home;
+      if (page && pageContainer) {
+        pageContainer.innerHTML = page.render();
+        if (headerTitleEl) headerTitleEl.textContent = page.title;
+        document.title = page.docTitle;
+        if (typeof window.onSpaPageLoaded === 'function') {
+          window.onSpaPageLoaded(key);
+        }
       }
+    }
+
+    try {
+      const localPreview = localStorage.getItem('site_config_preview');
+      if (localPreview) {
+        window.SITE_CONFIG = JSON.parse(localPreview);
+      }
+    } catch (_) {}
+
+    renderInitial(initialKey);
+
+    if (!isFileProtocol) {
+      fetch('./data/site-config.json?t=' + Date.now(), { cache: 'no-store' })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((remoteCfg) => {
+          if (remoteCfg && typeof remoteCfg === 'object') {
+            window.SITE_CONFIG = remoteCfg;
+            const currentKey = resolveRouteKey(window.location.pathname);
+            renderInitial(currentKey);
+          }
+        })
+        .catch(() => {});
     }
   });
 })();

@@ -627,15 +627,19 @@
   };
 
   // ===== 15. LocketGold Server Selection & Admin Code Download Gate =====
-  // Danh sách mã Admin hợp lệ (bạn có thể thêm/sửa mã tại đây)
-  const VALID_ADMIN_CODES = ['NHATTINH2026', 'LOCKETGOLD', 'ADMIN'];
+  function getValidAdminCodes() {
+    const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG || {};
+    const codes = Array.isArray(cfg.adminCodes) && cfg.adminCodes.length ? cfg.adminCodes : ['NHATTINH2026', 'LOCKETGOLD', 'ADMIN'];
+    return codes.map((c) => String(c).trim().toUpperCase());
+  }
 
   document.addEventListener('click', (e) => {
     const srvBtn = e.target.closest('.select-server-btn');
     if (!srvBtn) return;
     const name = srvBtn.getAttribute('data-server-name') || 'Máy Chủ 01';
     const url = srvBtn.getAttribute('data-server-url') || 'https://cloudflare-dns.com/dns-query';
-    sessionStorage.setItem('selected_dns_server', JSON.stringify({ name, url }));
+    const fileUrl = srvBtn.getAttribute('data-server-file') || '';
+    sessionStorage.setItem('selected_dns_server', JSON.stringify({ name, url, fileUrl }));
   });
 
   function initDownloadProfilePage(routeKey) {
@@ -648,7 +652,7 @@
     const downloadBtn = document.getElementById('btn-download-profile');
     if (!linkInput || !codeInput || !downloadBtn) return;
 
-    let server = { name: 'Máy Chủ 01', url: 'https://cloudflare-dns.com/dns-query' };
+    let server = { name: 'Máy Chủ 01', url: 'https://cloudflare-dns.com/dns-query', fileUrl: '' };
     try {
       const saved = sessionStorage.getItem('selected_dns_server');
       if (saved) server = JSON.parse(saved);
@@ -661,7 +665,7 @@
       const linkVal = linkInput.value.trim();
       const codeVal = codeInput.value.trim().toUpperCase();
       const isLinkValid = /^https?:\/\/.+/i.test(linkVal);
-      const isCodeValid = VALID_ADMIN_CODES.includes(codeVal);
+      const isCodeValid = getValidAdminCodes().includes(codeVal);
 
       if (isLinkValid && isCodeValid) {
         downloadBtn.disabled = false;
@@ -691,6 +695,19 @@
 
     downloadBtn.addEventListener('click', () => {
       if (downloadBtn.disabled) return;
+      if (server.fileUrl && server.fileUrl.trim()) {
+        const a = document.createElement('a');
+        a.href = server.fileUrl;
+        a.download = `LocketGold-${server.name.replace(/\s+/g, '-')}.mobileconfig`;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        if (typeof FuiToast !== 'undefined') {
+          FuiToast.success(`Đã tải xuống hồ sơ ${server.name}!`);
+        }
+        return;
+      }
       const mobileconfig = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -767,7 +784,7 @@
 
     function handleVerify() {
       const code = codeInput.value.trim().toUpperCase();
-      if (VALID_ADMIN_CODES.includes(code)) {
+      if (getValidAdminCodes().includes(code)) {
         sessionStorage.setItem('url_admin_verified', '1');
         if (typeof FuiToast !== 'undefined') {
           FuiToast.success('Xác thực thành công! Đang mở danh sách URL...');

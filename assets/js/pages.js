@@ -1,8 +1,143 @@
+window.DEFAULT_SITE_CONFIG = {
+  bio: {
+    subtitle: 'Nhật Tình',
+    paragraphs: [
+      'Mình là Nhật Tình — Lập trình viên Full-Stack. Chuyên môn chính tập trung vào phát triển hệ thống Back-end phân tán, thiết kế RESTful API hiệu năng cao và lập trình các giải pháp tự động hóa (Automation Bot, Cloudflare Serverless).',
+      'Định hướng làm việc thực chiến: luôn đặt tính bảo mật, tốc độ xử lý và khả năng mở rộng ổn định của sản phẩm lên hàng đầu.'
+    ]
+  },
+  projects: [
+    {
+      title: 'Facebook',
+      desc: 'Trang cá nhân Facebook chính thức — kết nối, giao lưu và hỗ trợ trực tiếp.',
+      url: 'https://facebook.com',
+      icon: 'ri-facebook-circle-line',
+      image: '',
+      isSpa: false,
+      spaRoute: ''
+    },
+    {
+      title: 'GitHub',
+      desc: 'Kho lưu trữ mã nguồn mở, công cụ tự động hóa và các dự án cá nhân.',
+      url: 'https://github.com',
+      icon: 'ri-github-line',
+      image: '',
+      isSpa: false,
+      spaRoute: ''
+    },
+    {
+      title: 'LocketGold',
+      desc: 'Trung tâm máy chủ DoH & tải cấu hình Locket Gold VIP vĩnh viễn.',
+      url: '/locketlam',
+      icon: 'ri-shield-flash-line',
+      image: '',
+      isSpa: true,
+      spaRoute: 'locketlam'
+    },
+    {
+      title: 'Dự án',
+      desc: 'Tổng hợp các sản phẩm phần mềm, website và giải pháp kỹ thuật đã triển khai.',
+      url: '/info',
+      icon: 'ri-folder-3-line',
+      image: '',
+      isSpa: true,
+      spaRoute: 'info'
+    }
+  ],
+  social: [
+    {
+      title: 'TikTok',
+      desc: '@nhattinh',
+      url: 'https://tiktok.com',
+      icon: 'ri-tiktok-line',
+      image: '',
+      fullWidth: false
+    },
+    {
+      title: 'GitHub',
+      desc: 'nhattinh',
+      url: 'https://github.com',
+      icon: 'ri-github-line',
+      image: '',
+      fullWidth: false
+    },
+    {
+      title: 'Zalo',
+      desc: 'Nhật Tình',
+      url: 'https://zalo.me',
+      icon: 'ri-chat-3-line',
+      image: '',
+      fullWidth: false
+    },
+    {
+      title: 'WeChat',
+      desc: 'Nhật Tình',
+      url: 'https://www.wechat.com',
+      icon: 'ri-wechat-line',
+      image: '',
+      fullWidth: false
+    },
+    {
+      title: 'Facebook',
+      desc: 'Trang cá nhân Nhật Tình — Hỗ trợ & kết nối',
+      url: 'https://facebook.com',
+      icon: 'ri-facebook-circle-line',
+      image: '',
+      fullWidth: true
+    }
+  ],
+  dnsServers: [
+    {
+      name: 'Máy Chủ 01',
+      url: 'https://cloudflare-dns.com/dns-query',
+      fileUrl: ''
+    },
+    {
+      name: 'Máy Chủ 02',
+      url: 'https://dns.google/dns-query',
+      fileUrl: ''
+    },
+    {
+      name: 'Máy Chủ 03',
+      url: 'https://dns.quad9.net/dns-query',
+      fileUrl: ''
+    }
+  ],
+  shadowrocketUrls: {
+    conf: 'https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.conf',
+    sgmodule: 'https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.sgmodule',
+    dns: 'https://cloudflare-dns.com/dns-query'
+  },
+  adminCodes: ['NHATTINH2026', 'LOCKETGOLD', 'ADMIN']
+};
+
+window.SITE_CONFIG = window.DEFAULT_SITE_CONFIG;
+
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderCardVisual(item, defaultIcon, sizeClass) {
+  if (item.image && item.image.trim()) {
+    return `<img src="${escHtml(item.image)}" alt="${escHtml(item.title)}" class="${sizeClass || 'w-8 h-8'} rounded-lg object-cover shrink-0 border border-sky-400/30" />`;
+  }
+  return `<i class="${escHtml(item.icon || defaultIcon)} text-[1.6rem] text-[#38bdf8] shrink-0 mt-0.5 group-hover:scale-110 transition-transform"></i>`;
+}
+
 window.SPA_PAGES = {
   home: {
     title: 'Nhật Tình',
     docTitle: 'Nhật Tình — Software Engineer • Systems Architect',
-    render: () => `
+    render: () => {
+      const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
+      const bio = cfg.bio || window.DEFAULT_SITE_CONFIG.bio;
+      const projects = cfg.projects || window.DEFAULT_SITE_CONFIG.projects;
+
+      return `
       <!-- Hero Section -->
       <section class="flex flex-col items-center gap-y-5 text-center pt-2">
         <div class="relative w-32 h-32 flex items-center justify-center">
@@ -58,13 +193,8 @@ window.SPA_PAGES = {
           <h2 class="text-xl font-semibold">Bio</h2>
         </div>
         <div class="flex-1 flex flex-col gap-y-3 text-[0.92rem] leading-relaxed">
-          <p class="font-semibold text-sky-400">Nhật Tình</p>
-          <p class="text-[hsl(var(--muted-foreground))]">
-            Mình là Nhật Tình — Lập trình viên Full-Stack. Chuyên môn chính tập trung vào phát triển hệ thống Back-end phân tán, thiết kế RESTful API hiệu năng cao và lập trình các giải pháp tự động hóa (Automation Bot, Cloudflare Serverless).
-          </p>
-          <p class="text-[hsl(var(--muted-foreground))]">
-            Định hướng làm việc thực chiến: luôn đặt tính bảo mật, tốc độ xử lý và khả năng mở rộng ổn định của sản phẩm lên hàng đầu.
-          </p>
+          <p class="font-semibold text-sky-400">${escHtml(bio.subtitle)}</p>
+          ${(bio.paragraphs || []).map((p) => `<p class="text-[hsl(var(--muted-foreground))]">${escHtml(p)}</p>`).join('')}
           <div class="flex flex-wrap items-center justify-start gap-3 pt-2">
             <a href="/info" data-spa="info" class="spa-link inline-flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))] px-4 py-2 text-sm font-medium hover:border-sky-400 hover:text-sky-400 transition-all">
               <span>←</span> Mạng xã hội &amp; Hỗ trợ
@@ -79,45 +209,22 @@ window.SPA_PAGES = {
           <h2 class="text-xl font-semibold">Projects</h2>
         </div>
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <a href="https://facebook.com" target="_blank" rel="noopener" class="profile-card p-4 flex items-start gap-3.5 group">
-            <i class="ri-facebook-circle-line text-[1.6rem] text-[#38bdf8] shrink-0 mt-0.5 group-hover:scale-110 transition-transform"></i>
-            <div class="flex flex-col gap-1">
-              <h3 class="font-semibold text-[0.95rem] group-hover:text-sky-400 transition-colors">Facebook</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
-                Trang cá nhân Facebook chính thức — kết nối, giao lưu và hỗ trợ trực tiếp.
-              </p>
-            </div>
-          </a>
-
-          <a href="https://github.com" target="_blank" rel="noopener" class="profile-card p-4 flex items-start gap-3.5 group">
-            <i class="ri-github-line text-[1.6rem] text-[#38bdf8] shrink-0 mt-0.5 group-hover:scale-110 transition-transform"></i>
-            <div class="flex flex-col gap-1">
-              <h3 class="font-semibold text-[0.95rem] group-hover:text-sky-400 transition-colors">GitHub</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
-                Kho lưu trữ mã nguồn mở, công cụ tự động hóa và các dự án cá nhân.
-              </p>
-            </div>
-          </a>
-
-          <a href="/locketlam" data-spa="locketlam" class="spa-link profile-card p-4 flex items-start gap-3.5 group">
-            <i class="ri-shield-flash-line text-[1.6rem] text-[#38bdf8] shrink-0 mt-0.5 group-hover:scale-110 transition-transform"></i>
-            <div class="flex flex-col gap-1">
-              <h3 class="font-semibold text-[0.95rem] group-hover:text-sky-400 transition-colors">LocketGold</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
-                Trung tâm máy chủ DoH &amp; tải cấu hình Locket Gold VIP vĩnh viễn.
-              </p>
-            </div>
-          </a>
-
-          <a href="/info" data-spa="info" class="spa-link profile-card p-4 flex items-start gap-3.5 group">
-            <i class="ri-folder-3-line text-[1.6rem] text-[#38bdf8] shrink-0 mt-0.5 group-hover:scale-110 transition-transform"></i>
-            <div class="flex flex-col gap-1">
-              <h3 class="font-semibold text-[0.95rem] group-hover:text-sky-400 transition-colors">Dự án</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
-                Tổng hợp các sản phẩm phần mềm, website và giải pháp kỹ thuật đã triển khai.
-              </p>
-            </div>
-          </a>
+          ${projects.map((p) => {
+            const isSpa = p.isSpa || (p.url && p.url.startsWith('/'));
+            const spaRoute = p.spaRoute || (p.url ? p.url.replace(/^\//, '') : 'home');
+            const attrs = isSpa
+              ? `href="${escHtml(p.url || '/')}" data-spa="${escHtml(spaRoute)}" class="spa-link profile-card p-4 flex items-start gap-3.5 group"`
+              : `href="${escHtml(p.url || '#')}" target="_blank" rel="noopener" class="profile-card p-4 flex items-start gap-3.5 group"`;
+            return `
+              <a ${attrs}>
+                ${renderCardVisual(p, 'ri-links-line', 'w-9 h-9')}
+                <div class="flex flex-col gap-1 min-w-0">
+                  <h3 class="font-semibold text-[0.95rem] group-hover:text-sky-400 transition-colors">${escHtml(p.title)}</h3>
+                  <p class="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">${escHtml(p.desc)}</p>
+                </div>
+              </a>
+            `;
+          }).join('')}
         </div>
       </section>
 
@@ -207,13 +314,18 @@ window.SPA_PAGES = {
           <span id="cham-ngon" class="italic">Code không bug là code chưa từng được chạy.</span>
         </div>
       </div>
-    `
+    `;
+    }
   },
 
   info: {
     title: 'Nhật Tình',
     docTitle: 'Thông Tin & Mạng Xã Hội — Nhật Tình',
-    render: () => `
+    render: () => {
+      const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
+      const social = cfg.social || window.DEFAULT_SITE_CONFIG.social;
+
+      return `
       <section class="flex flex-col gap-y-5 md:flex-row md:gap-y-0">
         <div class="md:min-w-36">
           <h2 class="text-xl font-semibold">Menu</h2>
@@ -230,50 +342,31 @@ window.SPA_PAGES = {
           <h2 class="text-xl font-semibold">Social</h2>
         </div>
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <a href="https://tiktok.com" target="_blank" rel="noopener" class="profile-card p-3.5 flex items-center gap-3 group">
-            <i class="ri-tiktok-line text-2xl text-sky-400"></i>
-            <div>
-              <h3 class="font-semibold text-sm group-hover:text-sky-400">TikTok</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))]">@nhattinh</p>
-            </div>
-          </a>
-          <a href="https://github.com" target="_blank" rel="noopener" class="profile-card p-3.5 flex items-center gap-3 group">
-            <i class="ri-github-line text-2xl text-sky-400"></i>
-            <div>
-              <h3 class="font-semibold text-sm group-hover:text-sky-400">GitHub</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))]">nhattinh</p>
-            </div>
-          </a>
-          <a href="https://zalo.me" target="_blank" rel="noopener" class="profile-card p-3.5 flex items-center gap-3 group">
-            <i class="ri-chat-3-line text-2xl text-sky-400"></i>
-            <div>
-              <h3 class="font-semibold text-sm group-hover:text-sky-400">Zalo</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))]">Nhật Tình</p>
-            </div>
-          </a>
-          <a href="https://www.wechat.com" target="_blank" rel="noopener" class="profile-card p-3.5 flex items-center gap-3 group">
-            <i class="ri-wechat-line text-2xl text-sky-400"></i>
-            <div>
-              <h3 class="font-semibold text-sm group-hover:text-sky-400">WeChat</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))]">Nhật Tình</p>
-            </div>
-          </a>
-          <a href="https://facebook.com" target="_blank" rel="noopener" class="profile-card p-3.5 flex items-center gap-3 group sm:col-span-2">
-            <i class="ri-facebook-circle-line text-2xl text-sky-400"></i>
-            <div>
-              <h3 class="font-semibold text-sm group-hover:text-sky-400">Facebook</h3>
-              <p class="text-xs text-[hsl(var(--muted-foreground))]">Trang cá nhân Nhật Tình — Hỗ trợ &amp; kết nối</p>
-            </div>
-          </a>
+          ${social.map((s) => `
+            <a href="${escHtml(s.url || '#')}" target="_blank" rel="noopener" class="profile-card p-3.5 flex items-center gap-3 group ${s.fullWidth ? 'sm:col-span-2' : ''}">
+              ${s.image && s.image.trim()
+                ? `<img src="${escHtml(s.image)}" alt="${escHtml(s.title)}" class="w-8 h-8 rounded-lg object-cover shrink-0 border border-sky-400/30" />`
+                : `<i class="${escHtml(s.icon || 'ri-share-line')} text-2xl text-sky-400 shrink-0"></i>`}
+              <div class="min-w-0">
+                <h3 class="font-semibold text-sm group-hover:text-sky-400">${escHtml(s.title)}</h3>
+                <p class="text-xs text-[hsl(var(--muted-foreground))] truncate">${escHtml(s.desc)}</p>
+              </div>
+            </a>
+          `).join('')}
         </div>
       </section>
-    `
+    `;
+    }
   },
 
   locketlam: {
     title: 'Nhật Tình',
     docTitle: 'LocketGold — Nhật Tình',
-    render: () => `
+    render: () => {
+      const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
+      const servers = cfg.dnsServers || window.DEFAULT_SITE_CONFIG.dnsServers;
+
+      return `
       <section class="flex flex-col gap-y-5 md:flex-row md:gap-y-0">
         <div class="md:min-w-36">
           <h2 class="text-xl font-semibold">Menu</h2>
@@ -290,28 +383,25 @@ window.SPA_PAGES = {
           <h2 class="text-xl font-semibold">Locket DNS</h2>
         </div>
         <div class="flex-1 flex flex-col gap-3">
-          ${[
-            { name: 'Máy Chủ 01', url: 'https://cloudflare-dns.com/dns-query' },
-            { name: 'Máy Chủ 02', url: 'https://dns.google/dns-query' },
-            { name: 'Máy Chủ 03', url: 'https://dns.quad9.net/dns-query' }
-          ].map((srv) => `
+          ${servers.map((srv) => `
             <div class="profile-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
                 <i class="ri-server-line text-2xl text-sky-400"></i>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h3 class="font-semibold text-sm">${srv.name}</h3>
-                    <span class="server-ping-badge text-[11px] px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-400 font-mono" data-ping-url="${srv.url}">Checking...</span>
+                    <h3 class="font-semibold text-sm">${escHtml(srv.name)}</h3>
+                    <span class="server-ping-badge text-[11px] px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-400 font-mono" data-ping-url="${escHtml(srv.url)}">Checking...</span>
                   </div>
-                  <p class="text-xs text-[hsl(var(--muted-foreground))] font-mono truncate max-w-[260px]">${srv.url}</p>
+                  <p class="text-xs text-[hsl(var(--muted-foreground))] font-mono truncate max-w-[260px]">${escHtml(srv.url)}</p>
                 </div>
               </div>
               <div class="flex items-center gap-2">
                 <a
                   href="/tai-ho-so"
                   data-spa="tai-ho-so"
-                  data-server-name="${srv.name}"
-                  data-server-url="${srv.url}"
+                  data-server-name="${escHtml(srv.name)}"
+                  data-server-url="${escHtml(srv.url)}"
+                  data-server-file="${escHtml(srv.fileUrl || '')}"
                   class="spa-link select-server-btn rounded-lg bg-sky-500/15 border border-sky-500/40 px-3.5 py-1.5 text-xs font-medium text-sky-400 hover:bg-sky-500/25 transition-colors"
                 >
                   Tải Hồ Sơ
@@ -343,12 +433,13 @@ window.SPA_PAGES = {
         </div>
         <div class="flex-1 profile-card p-4 flex flex-col gap-2 text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
           <p><strong class="text-[hsl(var(--foreground))]">Bước 1:</strong> Tải ứng dụng Shadowrocket hoặc cài đặt hồ sơ DNS DoH.</p>
-          <p><strong class="text-[hsl(var(--foreground))]">Bước 2:</strong> Chọn 1 trong 3 máy chủ có độ trễ thấp nhất (ping xanh).</p>
+          <p><strong class="text-[hsl(var(--foreground))]">Bước 2:</strong> Chọn 1 trong các máy chủ có độ trễ thấp nhất (ping xanh).</p>
           <p><strong class="text-[hsl(var(--foreground))]">Bước 3:</strong> Vào Cài đặt iPhone → Cài đặt chung → VPN &amp; Quản lý thiết bị → Tin cậy hồ sơ.</p>
           <p><strong class="text-[hsl(var(--foreground))]">Bước 4:</strong> Khởi động lại Locket và tận hưởng Gold VIP!</p>
         </div>
       </section>
-    `
+    `;
+    }
   },
 
   'tai-ho-so': {
@@ -490,7 +581,11 @@ window.SPA_PAGES = {
   'danh-sach-url': {
     title: 'Nhật Tình',
     docTitle: 'Danh Sách URL — Nhật Tình',
-    render: () => `
+    render: () => {
+      const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
+      const urls = cfg.shadowrocketUrls || window.DEFAULT_SITE_CONFIG.shadowrocketUrls;
+
+      return `
       <section class="flex flex-col gap-y-5 md:flex-row md:gap-y-0">
         <div class="md:min-w-36">
           <h2 class="text-xl font-semibold">Menu</h2>
@@ -514,17 +609,17 @@ window.SPA_PAGES = {
             {
               label: '1. Link .conf (Shadowrocket)',
               icon: 'ri-file-code-line',
-              url: 'https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.conf'
+              url: urls.conf
             },
             {
               label: '2. Link .sgmodule (Module)',
               icon: 'ri-puzzle-line',
-              url: 'https://raw.githubusercontent.com/nhattinh/locketgold/main/LocketGold.sgmodule'
+              url: urls.sgmodule
             },
             {
               label: '3. Link DNS (DoH)',
               icon: 'ri-global-line',
-              url: 'https://cloudflare-dns.com/dns-query'
+              url: urls.dns
             }
           ].map((item) => `
             <div class="profile-card p-4 flex flex-col gap-2.5">
@@ -536,12 +631,12 @@ window.SPA_PAGES = {
                 <input
                   type="text"
                   readonly
-                  value="${item.url}"
+                  value="${escHtml(item.url)}"
                   class="flex-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.7] px-3 py-2 text-xs font-mono text-[hsl(var(--foreground))] outline-none"
                 />
                 <button
                   type="button"
-                  data-ws-copy="${item.url}"
+                  data-ws-copy="${escHtml(item.url)}"
                   class="rounded-xl bg-sky-500/15 border border-sky-500/40 px-4 py-2 text-xs font-semibold text-sky-400 hover:bg-sky-500/25 transition-colors shrink-0"
                 >
                   <i class="ri-file-copy-line mr-1"></i>Copy Link
@@ -551,6 +646,7 @@ window.SPA_PAGES = {
           `).join('')}
         </div>
       </section>
-    `
+    `;
+    }
   }
 };
