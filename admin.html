@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
   <link rel="stylesheet" href="./assets/css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   <style>
     body {
       padding-bottom: 96px;
@@ -48,17 +49,29 @@
       border-color: #38bdf8;
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
     }
-    .tab-btn {
-      background-color: hsl(var(--primary-foreground) / 0.65);
-      border: 1px solid hsl(var(--border));
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.85rem;
+      border: 1px solid transparent;
+      font-size: 0.88rem;
+      font-weight: 600;
       color: hsl(var(--muted-foreground));
-      transition: all 0.22s ease;
+      transition: all 0.2s ease;
     }
-    .tab-btn.active {
+    .nav-item:hover {
+      background-color: rgba(56, 189, 248, 0.08);
+      color: #38bdf8;
+    }
+    .nav-item.active {
       background-color: rgba(56, 189, 248, 0.16);
       color: #38bdf8;
-      border-color: rgba(56, 189, 248, 0.7);
-      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.12);
     }
     .tab-panel {
       animation: pageEnter 0.28s ease forwards;
@@ -68,6 +81,11 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid hsl(var(--border));
+    }
+    .sidebar-surface {
+      background-color: hsl(var(--background) / 0.96);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
   </style>
 </head>
@@ -82,15 +100,29 @@
   <!-- Toast Container -->
   <div id="admin-toast-container" class="lam-toast-container"></div>
 
+  <!-- Mobile Sidebar Backdrop -->
+  <div id="admin-sidebar-backdrop" class="fixed inset-0 z-40 hidden bg-black/50 backdrop-blur-xs md:hidden"></div>
+
   <!-- Main Container -->
-  <div class="relative z-10 mx-auto max-w-2xl px-4 pt-4">
+  <div class="relative z-10 mx-auto max-w-5xl px-4 pt-4">
 
     <!-- Sticky Glass Header -->
     <header
       id="main-header"
       class="not-top sticky top-4 z-30 mb-6 flex items-center justify-between rounded-2xl border border-[hsl(var(--border))] px-4 py-2.5"
     >
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <!-- Mobile 3-bar Menu Toggle -->
+        <button
+          type="button"
+          id="admin-sidebar-toggle"
+          class="flex md:hidden h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))/0.6] text-lg hover:border-sky-400 hover:text-sky-400 transition-colors"
+          aria-label="Mở thanh menu"
+          title="Mở / Ẩn thanh bên"
+        >
+          <i class="ri-menu-3-line"></i>
+        </button>
+
         <div class="relative h-10 w-10 flex items-center justify-center shrink-0">
           <img src="./assets/img/avatar.jpg" alt="Avatar" class="h-9 w-9 rounded-full border border-sky-400/70 object-cover" />
           <svg class="crown3" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -109,7 +141,7 @@
               <span class="magic-text">Nhật Tình Admin</span>
             </span>
           </h1>
-          <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Quản lý nội dung, link, ảnh &amp; file</p>
+          <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Quản lý nội dung, link, ảnh, nhạc &amp; file</p>
         </div>
       </div>
 
@@ -129,157 +161,245 @@
       </div>
     </header>
 
-    <main class="flex flex-col gap-4">
-      <!-- GitHub Connection Card -->
-      <section class="profile-card p-4 flex flex-col gap-2.5">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold text-sky-400 flex items-center gap-1.5">
-            <i class="ri-github-fill text-lg"></i> Kết nối GitHub (để lưu cho mọi người cùng thấy)
-          </h2>
-          <span id="token-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold">Chưa nhập Token</span>
-        </div>
-        <div class="flex gap-2">
-          <input id="gh-token" type="password" class="inp flex-1" placeholder="Dán GitHub Token (ghp_... hoặc github_pat_...)" />
-          <button type="button" id="btn-save-token" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3.5 py-2 text-xs font-bold text-white shrink-0 transition-colors shadow-md shadow-sky-500/20">
-            Lưu Token
+    <!-- Layout: Sidebar + Content -->
+    <div class="flex flex-col md:flex-row gap-5 items-start">
+
+      <!-- Left Sidebar (Drawer on Mobile, Sticky on Desktop) -->
+      <aside
+        id="admin-sidebar"
+        class="sidebar-surface fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-300 p-4 border-r border-[hsl(var(--border))] md:static md:translate-x-0 md:w-60 md:shrink-0 md:rounded-2xl md:border md:sticky md:top-24"
+      >
+        <div class="flex items-center justify-between mb-3 md:hidden">
+          <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Mục Quản Lý</span>
+          <button type="button" id="admin-sidebar-close" class="p-1.5 rounded-lg hover:bg-sky-500/10 text-lg">
+            <i class="ri-close-line"></i>
           </button>
         </div>
-        <details class="text-xs text-[hsl(var(--muted-foreground))]">
-          <summary class="cursor-pointer text-sky-400 font-medium">Cách lấy GitHub Token miễn phí (làm 1 lần trên điện thoại)</summary>
-          <ol class="list-decimal pl-5 mt-1.5 space-y-1">
-            <li>Vào <b>github.com/settings/tokens</b> → <b>Generate new token (classic)</b>.</li>
-            <li>Đặt tên bất kỳ, chọn Expiration <b>No expiration</b>, tích ô <b>repo</b>.</li>
-            <li>Bấm <b>Generate token</b>, copy mã dán vào ô trên rồi bấm <b>Lưu Token</b>.</li>
-          </ol>
-        </details>
-      </section>
-
-      <!-- Tabs -->
-      <nav class="flex gap-2 overflow-x-auto pb-1">
-        <button type="button" class="tab-btn active rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="bio">1. Bio</button>
-        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="projects">2. Projects</button>
-        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="social">3. Social</button>
-        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="dns">4. Locket DNS</button>
-        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="urls">5. URL &amp; Mã</button>
-      </nav>
-
-      <!-- Tab 1: Bio -->
-      <section id="tab-bio" class="tab-panel profile-card p-4 flex flex-col gap-3">
-        <h2 class="text-sm font-bold text-sky-400">Chỉnh sửa Bio (Trang chủ)</h2>
-        <div>
-          <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Tên hiển thị trên Bio</label>
-          <input id="bio-subtitle" type="text" class="inp" />
-        </div>
-        <div>
-          <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Đoạn giới thiệu 1</label>
-          <textarea id="bio-p1" rows="3" class="inp"></textarea>
-        </div>
-        <div>
-          <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Đoạn giới thiệu 2</label>
-          <textarea id="bio-p2" rows="2" class="inp"></textarea>
-        </div>
-      </section>
-
-      <!-- Tab 2: Projects -->
-      <section id="tab-projects" class="tab-panel hidden flex-col gap-4">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold text-sky-400">4 Thẻ Projects Trang Chủ (Link &amp; Ảnh)</h2>
-          <button type="button" id="btn-add-project" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
-            + Thêm thẻ
+        <nav class="flex flex-col gap-1.5">
+          <button type="button" class="nav-item active" data-tab="github">
+            <i class="ri-github-fill text-lg"></i>
+            <span>Kết nối GitHub</span>
           </button>
-        </div>
-        <div id="projects-list" class="flex flex-col gap-3"></div>
+          <button type="button" class="nav-item" data-tab="bio">
+            <i class="ri-user-3-line text-lg"></i>
+            <span>1. Bio</span>
+          </button>
+          <button type="button" class="nav-item" data-tab="projects">
+            <i class="ri-folder-3-line text-lg"></i>
+            <span>2. Projects</span>
+          </button>
+          <button type="button" class="nav-item" data-tab="social">
+            <i class="ri-share-line text-lg"></i>
+            <span>3. Social</span>
+          </button>
+          <button type="button" class="nav-item" data-tab="dns">
+            <i class="ri-server-line text-lg"></i>
+            <span>4. Locket DNS</span>
+          </button>
+          <button type="button" class="nav-item" data-tab="urls">
+            <i class="ri-links-line text-lg"></i>
+            <span>5. URL &amp; Mã</span>
+          </button>
+          <button type="button" class="nav-item" data-tab="music">
+            <i class="ri-music-2-line text-lg"></i>
+            <span>6. Nhạc &amp; Tách MP3</span>
+          </button>
+        </nav>
+      </aside>
 
-        <div class="border-t border-[hsl(var(--border))] pt-4 flex flex-wrap items-center justify-between gap-2">
+      <!-- Main Panels (Only active tab is visible) -->
+      <main class="flex-1 w-full flex flex-col gap-4">
+
+        <!-- Tab 0: GitHub Connection -->
+        <section id="tab-github" class="tab-panel profile-card p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold text-sky-400 flex items-center gap-1.5">
+              <i class="ri-github-fill text-lg"></i> Kết nối GitHub (để lưu cho mọi người cùng thấy)
+            </h2>
+            <span id="token-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold">Chưa nhập Token</span>
+          </div>
+          <div class="flex gap-2">
+            <input id="gh-token" type="password" class="inp flex-1" placeholder="Dán GitHub Token (ghp_... hoặc github_pat_...)" />
+            <button type="button" id="btn-save-token" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3.5 py-2 text-xs font-bold text-white shrink-0 transition-colors shadow-md shadow-sky-500/20">
+              Lưu Token
+            </button>
+          </div>
+          <details class="text-xs text-[hsl(var(--muted-foreground))]">
+            <summary class="cursor-pointer text-sky-400 font-medium">Cách lấy GitHub Token miễn phí (làm 1 lần trên điện thoại)</summary>
+            <ol class="list-decimal pl-5 mt-1.5 space-y-1">
+              <li>Vào <b>github.com/settings/tokens</b> → <b>Generate new token (classic)</b>.</li>
+              <li>Đặt tên bất kỳ, chọn Expiration <b>No expiration</b>, tích ô <b>repo</b>.</li>
+              <li>Bấm <b>Generate token</b>, copy mã dán vào ô trên rồi bấm <b>Lưu Token</b>.</li>
+            </ol>
+          </details>
+        </section>
+
+        <!-- Tab 1: Bio -->
+        <section id="tab-bio" class="tab-panel hidden profile-card p-4 flex-col gap-3">
+          <h2 class="text-sm font-bold text-sky-400">Chỉnh sửa Bio (Trang chủ)</h2>
           <div>
-            <h2 class="text-sm font-bold text-sky-400">Danh sách Dự Án chi tiết</h2>
-            <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Hiện ra khi khách bấm vào thẻ "Dự án" (/du-an)</p>
+            <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Tên hiển thị trên Bio</label>
+            <input id="bio-subtitle" type="text" class="inp" />
           </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <button type="button" id="btn-add-myproject" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
-              + Thêm dự án
-            </button>
-            <button type="button" onclick="publishConfigToGithub()" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3 py-1.5 text-xs font-bold text-white transition-colors">
-              Đẩy Lên Web
-            </button>
+          <div>
+            <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Đoạn giới thiệu 1</label>
+            <textarea id="bio-p1" rows="3" class="inp"></textarea>
           </div>
-        </div>
-        <div id="myprojects-list" class="flex flex-col gap-3"></div>
-      </section>
+          <div>
+            <label class="text-xs text-[hsl(var(--muted-foreground))] mb-1 block">Đoạn giới thiệu 2</label>
+            <textarea id="bio-p2" rows="2" class="inp"></textarea>
+          </div>
+        </section>
 
-      <!-- Tab 3: Social -->
-      <section id="tab-social" class="tab-panel hidden flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold text-sky-400">Quản lý thẻ Social (Link &amp; Hình ảnh)</h2>
-          <button type="button" id="btn-add-social" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
-            + Thêm thẻ
-          </button>
-        </div>
-        <div id="social-list" class="flex flex-col gap-3"></div>
-      </section>
-
-      <!-- Tab 4: Locket DNS -->
-      <section id="tab-dns" class="tab-panel hidden flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold text-sky-400">Quản lý Locket DNS &amp; File Hồ Sơ</h2>
-          <button type="button" id="btn-add-dns" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
-            + Thêm máy chủ
-          </button>
-        </div>
-        <div class="profile-card p-3 flex items-center justify-between gap-2">
-          <label for="dns-count-input" class="text-xs font-semibold text-[hsl(var(--foreground))]">Số lượng máy chủ:</label>
-          <div class="flex items-center gap-2">
-            <input id="dns-count-input" type="number" min="1" max="20" class="inp !w-20 text-center" value="3" />
-            <button type="button" id="btn-apply-dns-count" class="rounded-xl bg-sky-500 px-3 py-2 text-xs font-bold text-white hover:bg-sky-400 transition-colors shrink-0">
-              Áp dụng
+        <!-- Tab 2: Projects -->
+        <section id="tab-projects" class="tab-panel hidden flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold text-sky-400">4 Thẻ Projects Trang Chủ (Link &amp; Ảnh)</h2>
+            <button type="button" id="btn-add-project" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+              + Thêm thẻ
             </button>
           </div>
-        </div>
-        <div id="dns-list" class="flex flex-col gap-3"></div>
-      </section>
+          <div id="projects-list" class="flex flex-col gap-3"></div>
 
-      <!-- Tab 5: Shadowrocket URLs & Admin Codes -->
-      <section id="tab-urls" class="tab-panel hidden profile-card p-4 flex-col gap-4">
-        <h2 class="text-sm font-bold text-sky-400">Quản lý 3 URL (Shadowrocket / DNS)</h2>
+          <div class="border-t border-[hsl(var(--border))] pt-4 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-sm font-bold text-sky-400">Danh sách Dự Án chi tiết</h2>
+              <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Hiện ra khi khách bấm vào thẻ "Dự án" (/du-an)</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" id="btn-add-myproject" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+                + Thêm dự án
+              </button>
+              <button type="button" onclick="publishConfigToGithub()" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3 py-1.5 text-xs font-bold text-white transition-colors">
+                Đẩy Lên Web
+              </button>
+            </div>
+          </div>
+          <div id="myprojects-list" class="flex flex-col gap-3"></div>
+        </section>
 
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-[hsl(var(--foreground))]">1. Link .conf (hoặc up file .conf lên)</label>
-          <input id="url-conf" type="text" class="inp" />
-          <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer w-fit hover:underline">
-            <i class="ri-upload-2-line"></i>
-            <span>Chọn file .conf từ điện thoại</span>
-            <input type="file" accept=".conf,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-conf', 'conf')" />
-          </label>
-        </div>
+        <!-- Tab 3: Social -->
+        <section id="tab-social" class="tab-panel hidden flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold text-sky-400">Quản lý thẻ Social (Link &amp; Hình ảnh)</h2>
+            <button type="button" id="btn-add-social" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+              + Thêm thẻ
+            </button>
+          </div>
+          <div id="social-list" class="flex flex-col gap-3"></div>
+        </section>
 
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-[hsl(var(--foreground))]">2. Link .sgmodule (hoặc up file .sgmodule lên)</label>
-          <input id="url-sgmodule" type="text" class="inp" />
-          <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer w-fit hover:underline">
-            <i class="ri-upload-2-line"></i>
-            <span>Chọn file .sgmodule từ điện thoại</span>
-            <input type="file" accept=".sgmodule,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-sgmodule', 'sgmodule')" />
-          </label>
-        </div>
+        <!-- Tab 4: Locket DNS -->
+        <section id="tab-dns" class="tab-panel hidden flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold text-sky-400">Quản lý Locket DNS &amp; File Hồ Sơ</h2>
+            <button type="button" id="btn-add-dns" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+              + Thêm máy chủ
+            </button>
+          </div>
+          <div class="profile-card p-3 flex items-center justify-between gap-2">
+            <label for="dns-count-input" class="text-xs font-semibold text-[hsl(var(--foreground))]">Số lượng máy chủ:</label>
+            <div class="flex items-center gap-2">
+              <input id="dns-count-input" type="number" min="1" max="20" class="inp !w-20 text-center" value="3" />
+              <button type="button" id="btn-apply-dns-count" class="rounded-xl bg-sky-500 px-3 py-2 text-xs font-bold text-white hover:bg-sky-400 transition-colors shrink-0">
+                Áp dụng
+              </button>
+            </div>
+          </div>
+          <div id="dns-list" class="flex flex-col gap-3"></div>
+        </section>
 
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-[hsl(var(--foreground))]">3. Link DNS (DoH)</label>
-          <input id="url-dns" type="text" class="inp" />
-        </div>
+        <!-- Tab 5: Shadowrocket URLs & Admin Codes -->
+        <section id="tab-urls" class="tab-panel hidden profile-card p-4 flex-col gap-4">
+          <h2 class="text-sm font-bold text-sky-400">Quản lý 3 URL (Shadowrocket / DNS)</h2>
 
-        <div class="border-t border-[hsl(var(--border))] pt-3 flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-sky-400">Mã do Admin cung cấp (cách nhau bởi dấu phẩy)</label>
-          <input id="admin-codes" type="text" class="inp" placeholder="NHATTINH2026, LOCKETGOLD, ADMIN" />
-        </div>
-      </section>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-[hsl(var(--foreground))]">1. Link .conf (hoặc up file .conf lên)</label>
+            <input id="url-conf" type="text" class="inp" />
+            <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer w-fit hover:underline">
+              <i class="ri-upload-2-line"></i>
+              <span>Chọn file .conf từ điện thoại</span>
+              <input type="file" accept=".conf,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-conf', 'conf')" />
+            </label>
+          </div>
 
-      <div id="admin-log" class="text-xs text-center text-sky-400 min-h-[1.25rem]"></div>
-    </main>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-[hsl(var(--foreground))]">2. Link .sgmodule (hoặc up file .sgmodule lên)</label>
+            <input id="url-sgmodule" type="text" class="inp" />
+            <label class="inline-flex items-center gap-2 text-xs text-sky-400 cursor-pointer w-fit hover:underline">
+              <i class="ri-upload-2-line"></i>
+              <span>Chọn file .sgmodule từ điện thoại</span>
+              <input type="file" accept=".sgmodule,.txt" class="hidden" onchange="uploadFileToRepo(this, 'url-sgmodule', 'sgmodule')" />
+            </label>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-[hsl(var(--foreground))]">3. Link DNS (DoH)</label>
+            <input id="url-dns" type="text" class="inp" />
+          </div>
+
+          <div class="border-t border-[hsl(var(--border))] pt-3 flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-sky-400">Mã do Admin cung cấp (cách nhau bởi dấu phẩy)</label>
+            <input id="admin-codes" type="text" class="inp" placeholder="NHATTINH2026, LOCKETGOLD, ADMIN" />
+          </div>
+        </section>
+
+        <!-- Tab 6: Music Upload & Video-to-MP3 Extractor -->
+        <section id="tab-music" class="tab-panel hidden flex-col gap-4">
+          <!-- Video to MP3 Converter -->
+          <div class="profile-card p-4 flex flex-col gap-3">
+            <div class="flex items-center gap-2 text-sm font-bold text-sky-400">
+              <i class="ri-film-line text-lg"></i>
+              <span>Lấy File MP3 từ Video (Tách nhạc trực tiếp)</span>
+            </div>
+            <p class="text-xs text-[hsl(var(--muted-foreground))]">
+              Chọn file video (.mp4, .mov, .webm...) trên điện thoại hoặc máy tính để tách thành file <b>.mp3</b>, sau đó tải về máy hoặc đẩy thẳng lên làm nhạc nền cho web.
+            </p>
+            <div class="flex flex-col gap-2">
+              <input id="video-song-title" type="text" class="inp" placeholder="Tên bài hát (để trống = lấy theo tên video)" />
+              <div class="flex flex-wrap items-center gap-2">
+                <label class="inline-flex items-center gap-2 rounded-xl bg-sky-500/15 border border-sky-400/50 px-3.5 py-2 text-xs font-bold text-sky-400 cursor-pointer hover:bg-sky-500/25">
+                  <i class="ri-video-upload-line"></i>
+                  <span>Chọn Video</span>
+                  <input id="video-file-input" type="file" accept="video/*" class="hidden" />
+                </label>
+                <button type="button" id="btn-convert-video" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3.5 py-2 text-xs font-bold text-white transition-colors">
+                  Tách MP3 Ngay
+                </button>
+              </div>
+              <p id="video-convert-status" class="text-xs text-[hsl(var(--muted-foreground))]"></p>
+              <div id="video-convert-actions" class="hidden flex-wrap gap-2 pt-1">
+                <a id="btn-download-mp3" href="#" download="audio.mp3" class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/50 bg-emerald-500/15 px-3 py-2 text-xs font-bold text-emerald-400">
+                  <i class="ri-download-2-line"></i> Tải MP3 về máy
+                </a>
+                <button type="button" id="btn-upload-converted-mp3" class="inline-flex items-center gap-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 px-3 py-2 text-xs font-bold text-white">
+                  <i class="ri-upload-cloud-2-line"></i> Đưa Lên Nhạc Nền Web
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Uploaded Music List -->
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-sm font-bold text-sky-400">Danh Sách Nhạc Nền Trên Web</h2>
+              <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Tải file .mp3 lên hoặc dán link MP3 của bạn</p>
+            </div>
+            <button type="button" id="btn-add-music" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors shrink-0">
+              + Thêm bài
+            </button>
+          </div>
+          <div id="music-list" class="flex flex-col gap-3"></div>
+        </section>
+
+        <div id="admin-log" class="text-xs text-center text-sky-400 min-h-[1.25rem]"></div>
+      </main>
+    </div>
   </div>
 
   <!-- Fixed Bottom Save Bar -->
-  <div class="admin-bottom-bar fixed bottom-0 inset-x-0 z-40 px-4 py-3">
-    <div class="mx-auto flex max-w-2xl items-center gap-2.5">
+  <div class="admin-bottom-bar fixed bottom-0 inset-x-0 z-30 px-4 py-3">
+    <div class="mx-auto flex max-w-5xl items-center gap-2.5">
       <button type="button" id="btn-preview-local" class="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))] px-3.5 py-2.5 text-xs font-bold hover:border-sky-400 hover:text-sky-400 shrink-0 transition-colors">
         Lưu Thử Máy Này
       </button>
@@ -289,7 +409,7 @@
     </div>
   </div>
 
-  <!-- Real-time Clock & Sakura Canvas -->
+  <!-- Real-time Clock, Live2D Pets & Sakura Canvas -->
   <div id="real-time" style="bottom: 4.5rem;">00:00:00</div>
   <div class="waifu-floor-effect" style="bottom: 4.8rem;"></div>
   <div id="waifu-tips" style="bottom: 18rem;"></div>
@@ -385,6 +505,41 @@
       setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-8px)'; setTimeout(() => el.remove(), 250); }, 2800);
     }
 
+    // ===== Sidebar Drawer & Tab Switching =====
+    const sidebarEl = document.getElementById('admin-sidebar');
+    const backdropEl = document.getElementById('admin-sidebar-backdrop');
+    function openSidebar() {
+      sidebarEl.classList.remove('-translate-x-full');
+      backdropEl.classList.remove('hidden');
+    }
+    function closeSidebar() {
+      sidebarEl.classList.add('-translate-x-full');
+      backdropEl.classList.add('hidden');
+    }
+    document.getElementById('admin-sidebar-toggle').addEventListener('click', () => {
+      if (sidebarEl.classList.contains('-translate-x-full')) openSidebar();
+      else closeSidebar();
+    });
+    document.getElementById('admin-sidebar-close').addEventListener('click', closeSidebar);
+    backdropEl.addEventListener('click', closeSidebar);
+
+    document.querySelectorAll('.nav-item').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach((b) => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach((p) => {
+          p.classList.add('hidden');
+          p.classList.remove('flex');
+        });
+        btn.classList.add('active');
+        const panel = document.getElementById('tab-' + btn.dataset.tab);
+        if (panel) {
+          panel.classList.remove('hidden');
+          panel.classList.add('flex');
+        }
+        closeSidebar();
+      });
+    });
+
     // ===== Admin Logic =====
     const REPO_OWNER = 'nhattinh486-art';
     const REPO_NAME = 'nhattinh486-art.github.io';
@@ -425,19 +580,6 @@
       showAdminToast('Đã lưu GitHub Token!', 'success');
     });
 
-    document.querySelectorAll('.tab-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach((p) => p.classList.add('hidden'));
-        btn.classList.add('active');
-        const panel = document.getElementById('tab-' + btn.dataset.tab);
-        if (panel) {
-          panel.classList.remove('hidden');
-          panel.classList.add('flex');
-        }
-      });
-    });
-
     function toBase64Utf8(str) {
       return btoa(unescape(encodeURIComponent(str)));
     }
@@ -449,6 +591,15 @@
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
+    }
+
+    function uint8ToBase64(u8) {
+      let bin = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < u8.length; i += chunk) {
+        bin += String.fromCharCode.apply(null, u8.subarray(i, i + chunk));
+      }
+      return btoa(bin);
     }
 
     async function githubGetSha(path, token) {
@@ -485,7 +636,7 @@
       if (!file) return;
       const token = localStorage.getItem('gh_admin_token') || tokenInput.value.trim();
       if (!token) {
-        showAdminToast('Vui lòng nhập GitHub Token ở trên trước khi up ảnh!', 'error');
+        showAdminToast('Vui lòng nhập GitHub Token trước khi up ảnh!', 'error');
         return;
       }
       try {
@@ -511,7 +662,7 @@
       if (!file) return;
       const token = localStorage.getItem('gh_admin_token') || tokenInput.value.trim();
       if (!token) {
-        showAdminToast('Vui lòng nhập GitHub Token ở trên trước khi up file!', 'error');
+        showAdminToast('Vui lòng nhập GitHub Token trước khi up file!', 'error');
         return;
       }
       try {
@@ -523,6 +674,10 @@
         if (dnsIdx !== null) {
           config.dnsServers[dnsIdx].fileUrl = `./${repoPath}`;
           renderDns();
+        } else if (folderPrefix === 'music') {
+          const mIdx = parseInt(targetInputId, 10);
+          config.music[mIdx].url = `./${repoPath}`;
+          renderMusic();
         } else {
           document.getElementById(targetInputId).value = `${SITE_ORIGIN}/${repoPath}`;
         }
@@ -533,6 +688,118 @@
         showAdminToast(e.message, 'error');
       }
     };
+
+    // ===== Video to MP3 Extractor (Client-side with lamejs) =====
+    let lastConvertedMp3 = null; // { bytes, fileName, title }
+    const videoInput = document.getElementById('video-file-input');
+    const videoStatus = document.getElementById('video-convert-status');
+    const videoActions = document.getElementById('video-convert-actions');
+    const dlMp3Link = document.getElementById('btn-download-mp3');
+
+    videoInput.addEventListener('change', () => {
+      const f = videoInput.files && videoInput.files[0];
+      if (f) {
+        videoStatus.textContent = `Đã chọn: ${f.name} (${(f.size / (1024 * 1024)).toFixed(1)} MB)`;
+      }
+    });
+
+    document.getElementById('btn-convert-video').addEventListener('click', async () => {
+      const file = videoInput.files && videoInput.files[0];
+      if (!file) {
+        showAdminToast('Vui lòng chọn 1 file video trước!', 'error');
+        return;
+      }
+      if (typeof lamejs === 'undefined') {
+        showAdminToast('Trình nén MP3 chưa tải xong, vui lòng thử lại!', 'error');
+        return;
+      }
+      try {
+        videoActions.classList.add('hidden');
+        videoActions.classList.remove('flex');
+        videoStatus.textContent = '⏳ Đang đọc và giải mã âm thanh từ video...';
+        const arrayBuf = await file.arrayBuffer();
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuf = await audioCtx.decodeAudioData(arrayBuf);
+        const channels = Math.min(2, audioBuf.numberOfChannels);
+        const sampleRate = audioBuf.sampleRate;
+        const encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128);
+        const mp3Chunks = [];
+
+        const floatToInt16 = (f32) => {
+          const out = new Int16Array(f32.length);
+          for (let i = 0; i < f32.length; i++) {
+            const s = Math.max(-1, Math.min(1, f32[i]));
+            out[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+          }
+          return out;
+        };
+
+        const left = floatToInt16(audioBuf.getChannelData(0));
+        const right = channels > 1 ? floatToInt16(audioBuf.getChannelData(1)) : left;
+        const blockSize = 1152;
+
+        videoStatus.textContent = '⏳ Đang nén thành file MP3...';
+        for (let i = 0; i < left.length; i += blockSize) {
+          const lChunk = left.subarray(i, i + blockSize);
+          const buf = channels > 1
+            ? encoder.encodeBuffer(lChunk, right.subarray(i, i + blockSize))
+            : encoder.encodeBuffer(lChunk);
+          if (buf.length > 0) mp3Chunks.push(new Uint8Array(buf));
+        }
+        const endBuf = encoder.flush();
+        if (endBuf.length > 0) mp3Chunks.push(new Uint8Array(endBuf));
+
+        const totalLen = mp3Chunks.reduce((a, b) => a + b.length, 0);
+        const merged = new Uint8Array(totalLen);
+        let offset = 0;
+        for (const c of mp3Chunks) {
+          merged.set(c, offset);
+          offset += c.length;
+        }
+
+        const baseTitle = document.getElementById('video-song-title').value.trim() || file.name.replace(/\.[^.]+$/, '');
+        const mp3Name = baseTitle.replace(/[^a-zA-Z0-9._-]/g, '_') + '.mp3';
+        lastConvertedMp3 = { bytes: merged, fileName: mp3Name, title: baseTitle };
+
+        const blob = new Blob([merged], { type: 'audio/mpeg' });
+        dlMp3Link.href = URL.createObjectURL(blob);
+        dlMp3Link.download = mp3Name;
+        videoActions.classList.remove('hidden');
+        videoActions.classList.add('flex');
+        videoStatus.textContent = `✅ Tách MP3 thành công (${(totalLen / (1024 * 1024)).toFixed(2)} MB)!`;
+        showAdminToast('Tách file MP3 từ video thành công!', 'success');
+      } catch (e) {
+        videoStatus.textContent = `❌ Không thể tách âm thanh: ${e.message}`;
+        showAdminToast('Lỗi tách MP3 từ video!', 'error');
+      }
+    });
+
+    document.getElementById('btn-upload-converted-mp3').addEventListener('click', async () => {
+      if (!lastConvertedMp3) return;
+      const token = localStorage.getItem('gh_admin_token') || tokenInput.value.trim();
+      if (!token) {
+        showAdminToast('Vui lòng nhập GitHub Token ở mục Kết nối GitHub trước!', 'error');
+        return;
+      }
+      try {
+        setLog(`⏳ Đang đẩy "${lastConvertedMp3.fileName}" lên GitHub...`);
+        const repoPath = `uploads/music-${Date.now()}-${lastConvertedMp3.fileName}`;
+        const b64 = uint8ToBase64(lastConvertedMp3.bytes);
+        await githubPutFile(repoPath, b64, `Upload extracted MP3 ${lastConvertedMp3.fileName}`, token);
+        if (!Array.isArray(config.music)) config.music = [];
+        config.music.push({
+          title: lastConvertedMp3.title,
+          artist: 'Nhật Tình',
+          url: `./${repoPath}`
+        });
+        renderMusic();
+        setLog(`✅ Đã đưa lên danh sách nhạc! Bấm "Lưu & Đẩy Lên Web" bên dưới để kích hoạt.`, '#34d399');
+        showAdminToast('Đã đưa MP3 lên danh sách nhạc nền!', 'success');
+      } catch (e) {
+        setLog(`❌ Lỗi đẩy MP3: ${e.message}`, '#f87171');
+        showAdminToast(e.message, 'error');
+      }
+    });
 
     function renderProjects() {
       const box = document.getElementById('projects-list');
@@ -630,6 +897,32 @@
       `).join('');
     }
 
+    function renderMusic() {
+      if (!Array.isArray(config.music)) config.music = [];
+      const box = document.getElementById('music-list');
+      if (!config.music.length) {
+        box.innerHTML = '<div class="profile-card p-4 text-xs text-[hsl(var(--muted-foreground))]">Chưa có bài hát nào. Hãy bấm <b>+ Thêm bài</b> hoặc tách MP3 từ video ở trên!</div>';
+        return;
+      }
+      box.innerHTML = config.music.map((m, i) => `
+        <div class="profile-card p-3.5 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-400">Bài hát #${i + 1}</span>
+            <button type="button" onclick="config.music.splice(${i},1);renderMusic()" class="text-xs text-rose-400 hover:underline">Xóa</button>
+          </div>
+          <input class="inp" placeholder="Tên bài hát" value="${(m.title || '').replace(/"/g, '&quot;')}" oninput="config.music[${i}].title=this.value" />
+          <input class="inp" placeholder="Ca sĩ / Nguồn" value="${(m.artist || '').replace(/"/g, '&quot;')}" oninput="config.music[${i}].artist=this.value" />
+          <div class="flex gap-2 items-center">
+            <input class="inp flex-1" placeholder="Link MP3 (https://... hoặc ./uploads/...)" value="${(m.url || '').replace(/"/g, '&quot;')}" oninput="config.music[${i}].url=this.value" />
+            <label class="rounded-xl bg-sky-500/15 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0 hover:bg-sky-500/25">
+              Up MP3
+              <input type="file" accept="audio/*" class="hidden" onchange="uploadFileToRepo(this,'${i}','music')" />
+            </label>
+          </div>
+        </div>
+      `).join('');
+    }
+
     function populateForm() {
       document.getElementById('bio-subtitle').value = config.bio.subtitle || '';
       document.getElementById('bio-p1').value = (config.bio.paragraphs && config.bio.paragraphs[0]) || '';
@@ -642,6 +935,7 @@
       renderMyProjects();
       renderSocial();
       renderDns();
+      renderMusic();
     }
 
     function collectForm() {
@@ -687,6 +981,11 @@
     document.getElementById('btn-add-dns').addEventListener('click', () => {
       config.dnsServers.push({ name: 'Máy Chủ Mới', url: 'https://cloudflare-dns.com/dns-query', fileUrl: '' });
       renderDns();
+    });
+    document.getElementById('btn-add-music').addEventListener('click', () => {
+      if (!Array.isArray(config.music)) config.music = [];
+      config.music.push({ title: 'Bài hát mới', artist: 'Nhật Tình', url: '' });
+      renderMusic();
     });
 
     document.getElementById('btn-preview-local').addEventListener('click', () => {
@@ -740,10 +1039,12 @@
         config = {
           bio: { subtitle: 'Nhật Tình', paragraphs: ['', ''] },
           projects: [],
+          myProjects: [],
           social: [],
           dnsServers: [],
           shadowrocketUrls: { conf: '', sgmodule: '', dns: '' },
-          adminCodes: ['NHATTINH2026']
+          adminCodes: ['NHATTINH2026'],
+          music: []
         };
       }
       populateForm();

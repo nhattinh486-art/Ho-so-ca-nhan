@@ -353,29 +353,15 @@
   });
 
   // ===== 8. Music Player & Prompt =====
-  const defaultPlaylist = [
-    {
-      title: 'Chill Lofi Ocean Breeze',
-      artist: 'Nhật Tình Radio',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-    },
-    {
-      title: 'Midnight Coding Session',
-      artist: 'Nhật Tình Beats',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
-    },
-    {
-      title: 'Whale Dreams Ambient',
-      artist: 'Nhật Tình Studio',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
-    }
-  ];
-
   function getPlaylist() {
-    return defaultPlaylist;
+    const cfg = window.SITE_CONFIG || {};
+    if (Array.isArray(cfg.music)) {
+      return cfg.music.filter((m) => m && m.url && m.url.trim());
+    }
+    return [];
   }
 
-  let currentTrackIdx = Math.floor(Math.random() * defaultPlaylist.length);
+  let currentTrackIdx = 0;
   const audioEl = new Audio();
   audioEl.preload = 'none';
   let isPlaying = false;
@@ -390,13 +376,13 @@
   const npPlayIcon = document.getElementById('np-play-icon');
 
   function maybeShowMusicPrompt() {
-    if (getCookie('skip_music_prompt') || isPlaying || !promptEl) return;
+    if (!getPlaylist().length || getCookie('skip_music_prompt') || isPlaying || !promptEl) return;
     promptEl.classList.add('show');
   }
 
   function updateMusicUI() {
     const list = getPlaylist();
-    const track = list[currentTrackIdx % list.length] || defaultPlaylist[0];
+    const track = list[currentTrackIdx % Math.max(1, list.length)] || { title: 'Chưa có nhạc', artist: 'Nhật Tình' };
     if (npTitle) npTitle.textContent = track.title;
     if (npArtist) npArtist.textContent = track.artist;
     document.querySelectorAll('.mini-music-btn i').forEach((ic) => {
@@ -422,7 +408,12 @@
 
   function playTrack(idx) {
     const list = getPlaylist();
-    if (!list.length) return;
+    if (!list.length) {
+      if (typeof FuiToast !== 'undefined') {
+        FuiToast.info('Chưa có bài hát nào. Hãy tải nhạc lên trong trang Admin!');
+      }
+      return;
+    }
     currentTrackIdx = ((idx % list.length) + list.length) % list.length;
     const track = list[currentTrackIdx];
     audioEl.src = track.url;
