@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0284c7" />
+  <title>Nhật Tình — Software Engineer • Systems Architect</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Times New Roman"', 'Times', 'serif'],
+            serif: ['"Times New Roman"', 'Times', 'serif'],
+            mono: ['"Times New Roman"', 'Times', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- RemixIcon v4.2.0 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+
+  <!-- Fancybox CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="./assets/css/style.css" />
+
+  <!-- Pace.js -->
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script>
+</head>
+<body class="relative min-h-screen antialiased selection:bg-sky-500/30 selection:text-sky-300">
+
+  <!-- Top Ocean Gradient Backdrop -->
+  <div
+    class="pointer-events-none absolute start-0 top-0 z-0 h-1/2 w-full opacity-40"
+    style="background: linear-gradient(#0284c755, transparent);"
+  ></div>
+
+  <!-- Loading Screen v2 -->
+  <div class="td-loading-v2">
+    <div class="flex flex-col items-center gap-4 px-6 text-center">
+      <div class="w-16 h-16 rounded-full border-2 border-sky-400/50 p-1 animate-pulse overflow-hidden">
+        <img
+          src="./assets/img/avatar.jpg"
+          alt="Loading Avatar"
+          class="w-full h-full rounded-full object-cover"
+        />
+      </div>
+      <p id="loading-greeting" class="text-sm text-sky-300 font-medium">Đang tải tài nguyên...</p>
+      <div class="w-56 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+        <div id="loading-bar-fill" class="h-full w-0 bg-gradient-to-r from-sky-500 via-cyan-400 to-teal-300 transition-all duration-150"></div>
+      </div>
+      <span id="loading-percentage" class="text-xs font-mono text-slate-400">0%</span>
+    </div>
+  </div>
+
+  <!-- Fullscreen Lock Screen -->
+  <div class="td-lock-screen" role="button" tabindex="0" aria-label="Chạm để mở khóa">
+    <canvas id="lockscreen-bg"></canvas>
+    <div class="relative z-10 flex flex-col items-center gap-4 px-6 text-center max-w-md">
+      <div class="w-24 h-24 rounded-full border-2 border-sky-400/70 p-1 shadow-[0_0_35px_rgba(56,189,248,0.45)] overflow-hidden">
+        <img
+          src="./assets/img/avatar.jpg"
+          alt="Nhật Tình Lock Avatar"
+          class="w-full h-full rounded-full object-cover"
+        />
+      </div>
+      <h2 class="text-3xl font-bold tracking-wider text-white drop-shadow">𝑵𝒉𝒂̣̂𝒕 𝑻𝒊̀𝒏𝒉</h2>
+      <p class="web_desc text-sm text-sky-200/90 transition-opacity duration-300 min-h-[2.5rem]">
+        Gió đưa cành trúc la đà, chào mừng bạn đến với nhà Nhật Tình 🐳
+      </p>
+      <div class="mt-6 flex flex-col items-center gap-1 text-xs text-sky-300/80">
+        <span>Chạm bất kỳ đâu để mở khóa</span>
+        <i class="ri-arrow-down-double-line text-2xl close-lockscreen text-sky-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Centered Container -->
+  <main class="relative z-10 mx-auto flex min-h-screen max-w-[60rem] flex-col items-center px-4 pb-16 pt-4 sm:px-7 lg:px-10">
+
+    <!-- Sticky Header -->
+    <header
+      id="main-header"
+      class="group sticky top-4 z-30 mb-14 flex w-full items-center justify-between rounded-2xl border border-transparent px-4 py-2.5 md:w-4/5 lg:w-5/6"
+    >
+      <h1 class="text-lg sm:text-xl font-bold tracking-tight">
+        <a href="/" data-spa="home" class="spa-link magic">
+          <span class="magic-star">
+            <svg viewBox="0 0 512 512"><path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z"/></svg>
+          </span>
+          <span class="magic-star">
+            <svg viewBox="0 0 512 512"><path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z"/></svg>
+          </span>
+          <span class="magic-star">
+            <svg viewBox="0 0 512 512"><path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z"/></svg>
+          </span>
+          <span class="magic-text">Nhật Tình</span>
+        </a>
+      </h1>
+
+      <div class="relative flex items-center gap-1.5 sm:gap-2">
+        <button
+          type="button"
+          class="mini-music-btn flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))/0.6] text-lg hover:border-sky-400 hover:text-sky-400 transition-colors"
+          aria-label="Phát nhạc"
+          title="Phát / Tạm dừng nhạc"
+        >
+          <i class="ri-play-circle-line"></i>
+        </button>
+
+        <button
+          type="button"
+          class="change-theme flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))/0.6] text-lg hover:border-sky-400 hover:text-sky-400 transition-colors"
+          aria-label="Đổi giao diện Sáng / Tối"
+          title="Đổi giao diện Sáng / Tối"
+        >
+          <i class="ri-sun-line"></i>
+        </button>
+
+        <button
+          type="button"
+          id="header-menu-toggle"
+          class="flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))/0.6] text-lg hover:border-sky-400 hover:text-sky-400 transition-colors"
+          aria-label="Mở menu"
+        >
+          <i class="ri-menu-3-line"></i>
+        </button>
+
+        <!-- Dropdown Menu Popup -->
+        <div
+          id="header-popup"
+          class="hidden absolute right-0 top-12 w-56 rounded-2xl border border-[hsl(var(--border))] p-2 shadow-2xl z-50"
+        >
+          <div class="px-3 py-1.5 text-[11px] font-bold tracking-wider text-sky-400 uppercase">
+            MENU NHẬT TÌNH 🐳
+          </div>
+          <nav class="flex flex-col gap-1 text-sm">
+            <a href="/" data-spa="home" class="spa-link flex items-center gap-2.5 rounded-xl px-3 py-2 hover:bg-sky-500/10 hover:text-sky-400 transition-colors">
+              <i class="ri-home-4-line"></i> Trang chủ
+            </a>
+            <a href="/info" data-spa="info" class="spa-link flex items-center gap-2.5 rounded-xl px-3 py-2 hover:bg-sky-500/10 hover:text-sky-400 transition-colors">
+              <i class="ri-user-3-line"></i> Thông tin
+            </a>
+            <a href="/locketlam" data-spa="locketlam" class="spa-link flex items-center gap-2.5 rounded-xl px-3 py-2 hover:bg-sky-500/10 hover:text-sky-400 transition-colors">
+              <i class="ri-shield-flash-line"></i> LocketGold
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- SPA Dynamic Content -->
+    <div id="page-content" class="w-full md:w-4/5 lg:w-5/6 flex flex-col gap-y-10"></div>
+
+    <!-- Footer -->
+    <footer class="mt-16 w-full md:w-4/5 lg:w-5/6 border-t border-[hsl(var(--border))] pt-6 text-center text-xs text-[hsl(var(--muted-foreground))] flex flex-col gap-1.5">
+      <p>© 2026 — Designed with ❤️ by <span class="text-sky-400 font-semibold">Nhật Tình</span></p>
+    </footer>
+  </main>
+
+  <!-- Music Prompt Toast -->
+  <div id="toast-prompt">
+    <div class="flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-2xl shrink-0">
+        🐬
+      </div>
+      <div class="flex-1">
+        <p class="text-xs sm:text-sm font-medium leading-snug">
+          Có muốn nghe nhạc chill vừa lướt web không bro?
+        </p>
+        <div class="mt-2.5 flex items-center gap-2">
+          <button
+            type="button"
+            id="btn-skip-music"
+            class="rounded-lg border border-[hsl(var(--border))] px-2.5 py-1 text-[11px] font-medium hover:bg-[hsl(var(--primary-foreground))] transition-colors"
+          >
+            Bỏ qua trong 10 phút
+          </button>
+          <button
+            type="button"
+            id="btn-accept-music"
+            class="rounded-lg bg-sky-500 px-3 py-1 text-[11px] font-semibold text-white hover:bg-sky-400 transition-colors shadow-sm shadow-sky-500/30"
+          >
+            Bắt đầu nghe
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Now Playing Card -->
+  <div id="now-playing-card">
+    <div id="np-disc" class="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-500 to-cyan-300 flex items-center justify-center text-white shrink-0 spin-slow spin-paused">
+      <i class="ri-disc-line text-lg"></i>
+    </div>
+    <div class="min-w-0 flex-1">
+      <p id="np-title" class="text-xs font-semibold truncate">Chill Lofi</p>
+      <p id="np-artist" class="text-[10px] text-[hsl(var(--muted-foreground))] truncate">LAMDev Radio</p>
+      <div class="mt-1 h-1 w-full rounded-full bg-[hsl(var(--border))] overflow-hidden">
+        <div id="np-progress" class="h-full w-0 bg-sky-400 transition-all duration-200"></div>
+      </div>
+    </div>
+    <div class="flex items-center gap-1 shrink-0">
+      <button type="button" id="np-play-btn" class="p-1 hover:text-sky-400 transition-colors" title="Phát / Tạm dừng">
+        <i id="np-play-icon" class="ri-play-fill"></i>
+      </button>
+      <button type="button" id="np-next-btn" class="p-1 hover:text-sky-400 transition-colors" title="Bài tiếp theo">
+        <i class="ri-skip-forward-fill"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Real-time Clock -->
+  <div id="real-time">00:00:00</div>
+
+  <!-- Scroll to Top Button -->
+  <button type="button" id="croll-to-top" aria-label="Lên đầu trang" title="Lên đầu trang">
+    <span class="scroll-percent">0%</span>
+    <i class="ri-arrow-up-line scroll-arrow"></i>
+  </button>
+
+  <!-- Live2D Floor Glow, Speech Bubble & Pet Toggles -->
+  <div class="waifu-floor-effect"></div>
+  <div id="waifu-tips"></div>
+  <button type="button" id="waifu-toggle" title="Ẩn / Hiện thú cưng" aria-label="Ẩn / Hiện thú cưng">
+    <i class="ri-bear-smile-line"></i>
+  </button>
+  <button type="button" id="whale-mascot-fab" onclick="tapWhaleMascot()" title="Cá voi LAMDev" aria-label="Cá voi LAMDev">
+    🐳
+  </button>
+
+  <!-- Sakura Petal Canvas -->
+  <canvas id="canvas_sakura"></canvas>
+
+  <!-- JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
+
+  <!-- App & Addon Scripts -->
+  <script src="./assets/js/pages.js"></script>
+  <script src="./assets/js/index.js"></script>
+  <script src="./assets/js/spa.js"></script>
+  <script src="./assets/js/addons/cursor-magic.js"></script>
+  <script src="./assets/js/addons/pixel-pet.js"></script>
+  <script src="./assets/js/addons/neko.js"></script>
+</body>
+</html>
