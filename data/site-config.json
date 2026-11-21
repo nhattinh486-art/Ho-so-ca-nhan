@@ -63,7 +63,9 @@
       "desc": "Hệ Thống Trợ Lý Kỹ Thuật, Dự Toán Vật Liệu Xanh, Tra Cứu TCVN, Giám Sát An Toàn & Chẩn Đoán Kết Cấu Xây Dựng Thông Minh",
       "url": "https://dtu-xaydung-ai.surge.sh/",
       "icon": "ri-folder-3-line",
-      "image": ""
+      "image": "",
+      "adminUrl": "https://dtu-xaydung-ai.surge.sh/admin.html",
+      "githubUrl": "https://github.com/nhattinh486-art/vietbuild-ai-hub"
     }
   ],
   "social": [
