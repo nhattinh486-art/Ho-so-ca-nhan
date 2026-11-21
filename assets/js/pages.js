@@ -147,7 +147,7 @@ function renderCardVisual(item, defaultIcon, sizeClass) {
 window.SPA_PAGES = {
   home: {
     title: 'Nhật Tình',
-    docTitle: 'Nhật Tình — Software Engineer • Systems Architect',
+    docTitle: 'Nhật Tình — Đơn Giản • Hiệu Quả • Khác Biệt • Sáng Tạo Không Giới Hạn',
     render: () => {
       const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
       const bio = cfg.bio || window.DEFAULT_SITE_CONFIG.bio;
@@ -191,7 +191,7 @@ window.SPA_PAGES = {
           </div>
 
           <p class="text-sky-400 font-medium text-[0.95rem]">
-            Software Engineer • Systems Architect
+            Đơn Giản • Hiệu Quả • Khác Biệt • Sáng Tạo Không Giới Hạn
           </p>
 
           <div class="flex flex-wrap items-center justify-center gap-3 mt-1 text-xs text-[hsl(var(--muted-foreground))]">
