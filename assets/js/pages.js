@@ -399,21 +399,85 @@ window.SPA_PAGES = {
           <h2 class="text-xl font-semibold">Dự Án</h2>
         </div>
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          ${list.length ? list.map((item) => {
-            const isSpa = item.url && item.url.startsWith('/');
-            const attrs = isSpa
-              ? `href="${escHtml(item.url)}" data-spa="${escHtml(item.url.replace(/^\//, ''))}" class="spa-link profile-card p-4 flex items-start gap-3.5 group"`
-              : `href="${escHtml(item.url || '#')}" target="_blank" rel="noopener" class="profile-card p-4 flex items-start gap-3.5 group"`;
-            return `
-              <a ${attrs}>
+          ${list.length ? list.map((item, idx) => `
+              <a href="/chi-tiet-du-an" data-spa="chi-tiet-du-an" data-project-idx="${idx}" class="spa-link select-project-btn profile-card p-4 flex items-start gap-3.5 group">
                 ${renderCardVisual(item, 'ri-folder-3-line', 'w-10 h-10')}
                 <div class="flex flex-col gap-1 min-w-0">
                   <h3 class="font-semibold text-[0.95rem] group-hover:text-sky-400 transition-colors">${escHtml(item.title)}</h3>
                   <p class="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">${escHtml(item.desc)}</p>
                 </div>
               </a>
-            `;
-          }).join('') : '<p class="text-sm text-[hsl(var(--muted-foreground))]">Chưa có dự án nào được thêm.</p>'}
+            `).join('') : '<p class="text-sm text-[hsl(var(--muted-foreground))]">Chưa có dự án nào được thêm.</p>'}
+        </div>
+      </section>
+    `;
+    }
+  },
+
+  'chi-tiet-du-an': {
+    title: 'Nhật Tình',
+    docTitle: 'Chi Tiết Dự Án — Nhật Tình',
+    render: () => {
+      const cfg = window.SITE_CONFIG || window.DEFAULT_SITE_CONFIG;
+      const list = cfg.myProjects || window.DEFAULT_SITE_CONFIG.myProjects || [];
+      let idx = 0;
+      try {
+        const saved = parseInt(sessionStorage.getItem('selected_project_idx'), 10);
+        if (!isNaN(saved) && list[saved]) idx = saved;
+      } catch (_) {}
+      const item = list[idx] || { title: 'Dự án', desc: '', url: '#', adminUrl: '', githubUrl: '' };
+      const isInternalUrl = item.url && item.url.startsWith('/');
+
+      return `
+      <section class="flex flex-col gap-y-5 md:flex-row md:gap-y-0">
+        <div class="md:min-w-36">
+          <h2 class="text-xl font-semibold">Menu</h2>
+        </div>
+        <div class="flex-1 flex flex-wrap items-center justify-start gap-3">
+          <a href="/du-an" data-spa="du-an" class="spa-link inline-flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))] px-4 py-2 text-sm font-medium hover:border-sky-400 hover:text-sky-400 transition-all">
+            <span>←</span> Quay lại Dự án
+          </a>
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-y-5 md:flex-row md:gap-x-6 md:gap-y-0">
+        <div class="md:min-w-36 shrink-0">
+          <h2 class="text-xl font-semibold">Chi Tiết</h2>
+        </div>
+        <div class="flex-1 profile-card p-5 flex flex-col gap-4">
+          <div class="flex items-start gap-4 border-b border-[hsl(var(--border))] pb-4">
+            ${renderCardVisual(item, 'ri-folder-3-line', 'w-12 h-12')}
+            <div class="min-w-0">
+              <h3 class="text-lg font-bold text-sky-400">${escHtml(item.title)}</h3>
+              <p class="text-sm text-[hsl(var(--muted-foreground))] mt-1 leading-relaxed">${escHtml(item.desc)}</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2.5">
+            ${item.url ? (isInternalUrl
+              ? `<a href="${escHtml(item.url)}" data-spa="${escHtml(item.url.replace(/^\//, ''))}" class="spa-link flex items-center justify-between rounded-xl border border-sky-500/40 bg-sky-500/15 px-4 py-3 text-sm font-semibold text-sky-400 hover:bg-sky-500/25 transition-colors">
+                  <span class="flex items-center gap-2"><i class="ri-global-line text-lg"></i> Mở Link Dự Án</span>
+                  <i class="ri-arrow-right-line"></i>
+                </a>`
+              : `<a href="${escHtml(item.url)}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-xl border border-sky-500/40 bg-sky-500/15 px-4 py-3 text-sm font-semibold text-sky-400 hover:bg-sky-500/25 transition-colors">
+                  <span class="flex items-center gap-2"><i class="ri-global-line text-lg"></i> Mở Link Dự Án</span>
+                  <i class="ri-external-link-line"></i>
+                </a>`) : ''}
+
+            ${item.adminUrl && item.adminUrl.trim() ? `
+              <a href="${escHtml(item.adminUrl)}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-colors">
+                <span class="flex items-center gap-2"><i class="ri-admin-line text-lg"></i> Mở Link Admin Dự Án</span>
+                <i class="ri-external-link-line"></i>
+              </a>
+            ` : ''}
+
+            ${item.githubUrl && item.githubUrl.trim() ? `
+              <a href="${escHtml(item.githubUrl)}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))] px-4 py-3 text-sm font-semibold hover:border-sky-400 hover:text-sky-400 transition-colors">
+                <span class="flex items-center gap-2"><i class="ri-github-fill text-lg"></i> Mở Link GitHub</span>
+                <i class="ri-external-link-line"></i>
+              </a>
+            ` : ''}
+          </div>
         </div>
       </section>
     `;

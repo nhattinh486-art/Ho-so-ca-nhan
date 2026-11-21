@@ -190,14 +190,19 @@
         </div>
         <div id="projects-list" class="flex flex-col gap-3"></div>
 
-        <div class="border-t border-[hsl(var(--border))] pt-4 flex items-center justify-between">
+        <div class="border-t border-[hsl(var(--border))] pt-4 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 class="text-sm font-bold text-sky-400">Danh sách Dự Án chi tiết</h2>
             <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Hiện ra khi khách bấm vào thẻ "Dự án" (/du-an)</p>
           </div>
-          <button type="button" id="btn-add-myproject" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors shrink-0">
-            + Thêm dự án
-          </button>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" id="btn-add-myproject" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors">
+              + Thêm dự án
+            </button>
+            <button type="button" onclick="publishConfigToGithub()" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3 py-1.5 text-xs font-bold text-white transition-colors">
+              Đẩy Lên Web
+            </button>
+          </div>
         </div>
         <div id="myprojects-list" class="flex flex-col gap-3"></div>
       </section>
@@ -562,7 +567,9 @@
           </div>
           <input class="inp" placeholder="Tên dự án" value="${(p.title || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].title=this.value" />
           <input class="inp" placeholder="Mô tả dự án" value="${(p.desc || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].desc=this.value" />
-          <input class="inp" placeholder="Đường link (https://...)" value="${(p.url || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].url=this.value" />
+          <input class="inp" placeholder="Link dự án (https://...)" value="${(p.url || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].url=this.value" />
+          <input class="inp" placeholder="Link Admin của dự án (nếu có)" value="${(p.adminUrl || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].adminUrl=this.value" />
+          <input class="inp" placeholder="Link GitHub của dự án (nếu có)" value="${(p.githubUrl || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].githubUrl=this.value" />
           <div class="flex gap-2 items-center">
             <input class="inp flex-1" placeholder="Link ảnh (hoặc để trống dùng icon)" value="${(p.image || '').replace(/"/g, '&quot;')}" oninput="config.myProjects[${i}].image=this.value" />
             <label class="rounded-xl bg-sky-500/15 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0 hover:bg-sky-500/25">
@@ -658,7 +665,7 @@
     });
     document.getElementById('btn-add-myproject').addEventListener('click', () => {
       if (!Array.isArray(config.myProjects)) config.myProjects = [];
-      config.myProjects.push({ title: 'Dự án mới', desc: 'Mô tả dự án của bạn', url: 'https://', icon: 'ri-folder-3-line', image: '' });
+      config.myProjects.push({ title: 'Dự án mới', desc: 'Mô tả dự án của bạn', url: 'https://', adminUrl: '', githubUrl: '', icon: 'ri-folder-3-line', image: '' });
       renderMyProjects();
     });
     document.getElementById('btn-apply-dns-count').addEventListener('click', () => {
@@ -689,7 +696,7 @@
       showAdminToast('Đã lưu bản xem thử trên máy này!', 'success');
     });
 
-    document.getElementById('btn-publish-github').addEventListener('click', async () => {
+    window.publishConfigToGithub = async function () {
       const token = localStorage.getItem('gh_admin_token') || tokenInput.value.trim();
       if (!token) {
         showAdminToast('Vui lòng nhập GitHub Token để lưu lên web!', 'error');
@@ -707,7 +714,9 @@
         setLog(`❌ Lỗi khi lưu lên GitHub: ${e.message}`, '#f87171');
         showAdminToast(e.message, 'error');
       }
-    });
+    };
+
+    document.getElementById('btn-publish-github').addEventListener('click', window.publishConfigToGithub);
 
     (async function init() {
       updateTokenBadge();

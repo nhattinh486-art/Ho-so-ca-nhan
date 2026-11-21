@@ -634,6 +634,12 @@
   }
 
   document.addEventListener('click', (e) => {
+    const projBtn = e.target.closest('.select-project-btn');
+    if (projBtn) {
+      const idx = projBtn.getAttribute('data-project-idx') || '0';
+      sessionStorage.setItem('selected_project_idx', idx);
+    }
+
     const srvBtn = e.target.closest('.select-server-btn');
     if (!srvBtn) return;
     const name = srvBtn.getAttribute('data-server-name') || 'Máy Chủ 01';
