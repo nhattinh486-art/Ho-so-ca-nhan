@@ -353,27 +353,35 @@
   });
 
   // ===== 8. Music Player & Prompt =====
-  const playlist = [
+  const defaultPlaylist = [
     {
       title: 'Chill Lofi Ocean Breeze',
       artist: 'Nhật Tình Radio',
-      url: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3'
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
     },
     {
       title: 'Midnight Coding Session',
       artist: 'Nhật Tình Beats',
-      url: 'https://cdn.pixabay.com/download/audio/2022/02/07/audio_1822e14983.mp3?filename=empty-mind-118973.mp3'
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
     },
     {
       title: 'Whale Dreams Ambient',
       artist: 'Nhật Tình Studio',
-      url: 'https://cdn.pixabay.com/download/audio/2022/10/25/audio_946f6a3b52.mp3?filename=chill-abstract-intention-12099.mp3'
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
     }
   ];
 
-  let currentTrackIdx = Math.floor(Math.random() * playlist.length);
+  function getPlaylist() {
+    const cfg = window.SITE_CONFIG || {};
+    if (Array.isArray(cfg.music) && cfg.music.length > 0) {
+      return cfg.music.filter((m) => m && m.url && m.url.trim());
+    }
+    return defaultPlaylist;
+  }
+
+  let currentTrackIdx = 0;
   const audioEl = new Audio();
-  audioEl.crossOrigin = 'anonymous';
+  audioEl.preload = 'none';
   let isPlaying = false;
   let collapseTimer = null;
 
@@ -391,7 +399,8 @@
   }
 
   function updateMusicUI() {
-    const track = playlist[currentTrackIdx];
+    const list = getPlaylist();
+    const track = list[currentTrackIdx % list.length] || defaultPlaylist[0];
     if (npTitle) npTitle.textContent = track.title;
     if (npArtist) npArtist.textContent = track.artist;
     document.querySelectorAll('.mini-music-btn i').forEach((ic) => {
@@ -416,8 +425,10 @@
   }
 
   function playTrack(idx) {
-    currentTrackIdx = (idx + playlist.length) % playlist.length;
-    const track = playlist[currentTrackIdx];
+    const list = getPlaylist();
+    if (!list.length) return;
+    currentTrackIdx = ((idx % list.length) + list.length) % list.length;
+    const track = list[currentTrackIdx];
     audioEl.src = track.url;
     audioEl.play().then(() => {
       isPlaying = true;
@@ -430,7 +441,7 @@
       isPlaying = false;
       updateMusicUI();
       if (typeof FuiToast !== 'undefined') {
-        FuiToast.warning('Trình duyệt chặn tự phát hoặc mạng chậm, hãy bấm Play lại nhé!');
+        FuiToast.warning('Trình duyệt chặn tự phát hoặc không tải được nhạc, hãy bấm Play lại nhé!');
       }
     });
   }
