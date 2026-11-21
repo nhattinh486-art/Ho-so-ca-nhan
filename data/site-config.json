@@ -104,17 +104,17 @@
   "dnsServers": [
     {
       "name": "Máy Chủ 01",
-      "url": "https://cloudflare-dns.com/dns-query",
+      "url": "",
       "fileUrl": ""
     },
     {
       "name": "Máy Chủ 02",
-      "url": "https://dns.google/dns-query",
-      "fileUrl": ""
+      "url": "",
+      "fileUrl": "./uploads/dns-1795269130963-NhatTinh-LocketGold2.mobileconfig"
     },
     {
       "name": "Máy Chủ 03",
-      "url": "https://dns.quad9.net/dns-query",
+      "url": "",
       "fileUrl": ""
     }
   ],
