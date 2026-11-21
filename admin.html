@@ -266,9 +266,20 @@
 
   <!-- Real-time Clock & Sakura Canvas -->
   <div id="real-time" style="bottom: 4.5rem;">00:00:00</div>
+  <div class="waifu-floor-effect" style="bottom: 4.8rem;"></div>
+  <div id="waifu-tips" style="bottom: 18rem;"></div>
+  <button type="button" id="waifu-toggle" style="bottom: 4.8rem;" title="Ẩn / Hiện thú cưng" aria-label="Ẩn / Hiện thú cưng">
+    <i class="ri-bear-smile-line"></i>
+  </button>
+  <button type="button" id="whale-mascot-fab" style="bottom: 4.8rem;" onclick="if(window.showWaifuTip)window.showWaifuTip('Cá voi xanh chào Nhật Tình Admin! 🐳',3200);" title="Cá voi Nhật Tình" aria-label="Cá voi Nhật Tình">
+    🐳
+  </button>
   <canvas id="canvas_sakura"></canvas>
 
+  <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
   <script src="./assets/js/addons/cursor-magic.js"></script>
+  <script src="./assets/js/addons/pixel-pet.js"></script>
+  <script src="./assets/js/addons/neko.js"></script>
   <script>
     // ===== Theme Sync =====
     const htmlEl = document.documentElement;
@@ -306,18 +317,18 @@
       let sw = (sakCanvas.width = window.innerWidth);
       let sh = (sakCanvas.height = window.innerHeight);
       window.addEventListener('resize', () => { sw = sakCanvas.width = window.innerWidth; sh = sakCanvas.height = window.innerHeight; });
-      const petals = Array.from({ length: 8 }, () => ({
+      const petals = Array.from({ length: 14 }, () => ({
         x: Math.random() * sw, y: Math.random() * sh,
-        size: Math.random() * 7 + 6, sy: Math.random() * 1 + 0.6,
-        sx: Math.random() * 0.7 - 0.3, a: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.04
+        size: Math.random() * 8 + 8, sy: Math.random() * 1.1 + 0.7,
+        sx: Math.random() * 0.8 - 0.3, a: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.04
       }));
       (function loop() {
         ctx.clearRect(0, 0, sw, sh);
         petals.forEach((p) => {
-          p.y += p.sy; p.x += p.sx + Math.sin(p.y * 0.012) * 0.35; p.a += p.spin;
+          p.y += p.sy; p.x += p.sx + Math.sin(p.y * 0.012) * 0.4; p.a += p.spin;
           if (p.y > sh + 20) { p.y = -20; p.x = Math.random() * sw; }
           ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
-          ctx.globalAlpha = 0.55; ctx.fillStyle = '#fbcfe8';
+          ctx.globalAlpha = 0.72; ctx.fillStyle = '#fbcfe8';
           ctx.beginPath();
           ctx.moveTo(0, -p.size / 2);
           ctx.bezierCurveTo(p.size / 2, -p.size / 2, p.size / 2, p.size / 2, 0, p.size / 2);
