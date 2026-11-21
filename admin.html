@@ -218,8 +218,23 @@
             </h2>
             <span id="token-badge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-semibold">Chưa nhập Token</span>
           </div>
-          <div class="flex gap-2">
-            <input id="gh-token" type="password" class="inp flex-1" placeholder="Dán GitHub Token (ghp_... hoặc github_pat_...)" />
+          <div class="flex flex-wrap sm:flex-nowrap gap-2">
+            <div class="relative flex-1 min-w-[200px]">
+              <input id="gh-token" type="password" class="inp w-full pr-10" placeholder="Dán GitHub Token (ghp_... hoặc github_pat_...)" />
+              <button
+                type="button"
+                id="btn-toggle-token"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-base text-[hsl(var(--muted-foreground))] hover:text-sky-400 transition-colors"
+                title="Hiện / Ẩn Token"
+                aria-label="Hiện / Ẩn Token"
+              >
+                <i class="ri-eye-line"></i>
+              </button>
+            </div>
+            <button type="button" id="btn-copy-token" class="inline-flex items-center justify-center gap-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--primary-foreground))/0.6] hover:border-sky-400 hover:text-sky-400 px-3 py-2 text-xs font-bold shrink-0 transition-colors" title="Sao chép Token">
+              <i class="ri-file-copy-line"></i>
+              <span>Sao chép</span>
+            </button>
             <button type="button" id="btn-save-token" class="rounded-xl bg-sky-500 hover:bg-sky-400 px-3.5 py-2 text-xs font-bold text-white shrink-0 transition-colors shadow-md shadow-sky-500/20">
               Lưu Token
             </button>
@@ -578,6 +593,33 @@
       updateTokenBadge();
       setLog('✅ Đã lưu GitHub Token vào máy!', '#34d399');
       showAdminToast('Đã lưu GitHub Token!', 'success');
+    });
+
+    const toggleTokenBtn = document.getElementById('btn-toggle-token');
+    toggleTokenBtn.addEventListener('click', () => {
+      const isHidden = tokenInput.type === 'password';
+      tokenInput.type = isHidden ? 'text' : 'password';
+      const ic = toggleTokenBtn.querySelector('i');
+      if (ic) ic.className = isHidden ? 'ri-eye-off-line' : 'ri-eye-line';
+    });
+
+    document.getElementById('btn-copy-token').addEventListener('click', async () => {
+      const val = (tokenInput.value || localStorage.getItem('gh_admin_token') || '').trim();
+      if (!val) {
+        showAdminToast('Chưa có Token để sao chép!', 'error');
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(val);
+        showAdminToast('Đã sao chép GitHub Token!', 'success');
+      } catch {
+        const prevType = tokenInput.type;
+        tokenInput.type = 'text';
+        tokenInput.select();
+        document.execCommand('copy');
+        tokenInput.type = prevType;
+        showAdminToast('Đã sao chép GitHub Token!', 'success');
+      }
     });
 
     function toBase64Utf8(str) {
