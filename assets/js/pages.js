@@ -251,70 +251,61 @@ window.SPA_PAGES = {
         </div>
         <div class="flex-1 flex flex-col gap-y-3.5">
           <div class="flex flex-col sm:flex-row sm:items-start gap-2">
-            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">Languages</h3>
+            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">LocketGold</h3>
             <div class="flex-1 flex flex-wrap gap-2">
-              <span class="skill-tag">PHP</span>
-              <span class="skill-tag">JavaScript</span>
-              <span class="skill-tag">TypeScript</span>
-              <span class="skill-tag">Python</span>
-              <span class="skill-tag">C / C++</span>
+              <span class="skill-tag">Shadowrocket</span>
+              <span class="skill-tag">DNS over HTTPS (DoH)</span>
+              <span class="skill-tag">Apple Mobileconfig</span>
+              <span class="skill-tag">.conf</span>
+              <span class="skill-tag">.sgmodule</span>
+              <span class="skill-tag">Cloudflare DNS</span>
+              <span class="skill-tag">Google DNS</span>
+              <span class="skill-tag">Quad9 DNS</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-start gap-2">
+            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">Web &amp; Media</h3>
+            <div class="flex-1 flex flex-wrap gap-2">
               <span class="skill-tag">HTML5</span>
               <span class="skill-tag">CSS3</span>
-              <span class="skill-tag">SQL</span>
-              <span class="skill-tag">Bash / Shell</span>
-            </div>
-          </div>
-
-          <div class="flex flex-col sm:flex-row sm:items-start gap-2">
-            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">Frameworks</h3>
-            <div class="flex-1 flex flex-wrap gap-2">
-              <span class="skill-tag">Laravel</span>
-              <span class="skill-tag">Node.js</span>
-              <span class="skill-tag">Express.js</span>
-              <span class="skill-tag">React.js</span>
-              <span class="skill-tag">Vue.js</span>
-              <span class="skill-tag">React Native</span>
-              <span class="skill-tag">Flutter</span>
+              <span class="skill-tag">JavaScript</span>
               <span class="skill-tag">Tailwind CSS</span>
-              <span class="skill-tag">Bootstrap</span>
+              <span class="skill-tag">PWA (Mobile App)</span>
+              <span class="skill-tag">SPA Router</span>
+              <span class="skill-tag">GitHub Pages</span>
+              <span class="skill-tag">GitHub API</span>
+              <span class="skill-tag">LameJS (MP3)</span>
+              <span class="skill-tag">Canvas 2D</span>
+              <span class="skill-tag">Live2D</span>
             </div>
           </div>
 
           <div class="flex flex-col sm:flex-row sm:items-start gap-2">
-            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">Database</h3>
+            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">Hệ Thống Máy</h3>
             <div class="flex-1 flex flex-wrap gap-2">
-              <span class="skill-tag">MySQL</span>
-              <span class="skill-tag">PostgreSQL</span>
-              <span class="skill-tag">MongoDB</span>
-              <span class="skill-tag">SQL Server</span>
-              <span class="skill-tag">Redis</span>
-            </div>
-          </div>
-
-          <div class="flex flex-col sm:flex-row sm:items-start gap-2">
-            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">DevOps &amp; Cloud</h3>
-            <div class="flex-1 flex flex-wrap gap-2">
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">Node.js</span>
+              <span class="skill-tag">npm</span>
+              <span class="skill-tag">.NET</span>
               <span class="skill-tag">Docker</span>
-              <span class="skill-tag">Linux</span>
-              <span class="skill-tag">Nginx</span>
-              <span class="skill-tag">Apache</span>
-              <span class="skill-tag">Cloudflare Workers</span>
-              <span class="skill-tag">cPanel</span>
               <span class="skill-tag">Git</span>
+              <span class="skill-tag">GitHub CLI</span>
+              <span class="skill-tag">VS Code</span>
             </div>
           </div>
 
           <div class="flex flex-col sm:flex-row sm:items-start gap-2">
-            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">Tools</h3>
+            <h3 class="sm:w-1/4 text-sm font-medium text-[hsl(var(--muted-foreground))] pt-1">AI &amp; Tích Hợp</h3>
             <div class="flex-1 flex flex-wrap gap-2">
-              <span class="skill-tag">RESTful API</span>
-              <span class="skill-tag">Automation Bot</span>
-              <span class="skill-tag">Reverse Engineering</span>
-              <span class="skill-tag">Shadowrocket</span>
-              <span class="skill-tag">Laragon</span>
-              <span class="skill-tag">Postman</span>
-              <span class="skill-tag">Figma</span>
-              <span class="skill-tag">VSCode</span>
+              <span class="skill-tag">Gemini AI</span>
+              <span class="skill-tag">Vercel</span>
+              <span class="skill-tag">Netlify</span>
+              <span class="skill-tag">Chrome DevTools</span>
+              <span class="skill-tag">AutoCAD</span>
+              <span class="skill-tag">Canva</span>
+              <span class="skill-tag">Google Docs</span>
+              <span class="skill-tag">Google Sheets</span>
             </div>
           </div>
         </div>
