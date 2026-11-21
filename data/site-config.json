@@ -49,7 +49,8 @@
       "desc": "Trang hồ sơ cá nhân với hiệu ứng đại dương, Live2D & trình quản trị PWA.",
       "url": "https://nhattinh486-art.github.io/",
       "icon": "ri-global-line",
-      "image": ""
+      "image": "",
+      "adminUrl": "https://nhattinh486-art.github.io/admin.html"
     },
     {
       "title": "LocketGold DNS & Config",
@@ -135,5 +136,6 @@
     "NHATTINH2026",
     "LOCKETGOLD",
     "ADMIN"
-  ]
+  ],
+  "music": []
 }
