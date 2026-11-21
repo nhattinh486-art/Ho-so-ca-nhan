@@ -161,7 +161,6 @@
         <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="social">3. Social</button>
         <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="dns">4. Locket DNS</button>
         <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="urls">5. URL &amp; Mã</button>
-        <button type="button" class="tab-btn rounded-xl px-3.5 py-2 text-xs font-bold shrink-0" data-tab="music">6. Nhạc</button>
       </nav>
 
       <!-- Tab 1: Bio -->
@@ -272,20 +271,6 @@
           <label class="text-xs font-bold text-sky-400">Mã do Admin cung cấp (cách nhau bởi dấu phẩy)</label>
           <input id="admin-codes" type="text" class="inp" placeholder="NHATTINH2026, LOCKETGOLD, ADMIN" />
         </div>
-      </section>
-
-      <!-- Tab 6: Music -->
-      <section id="tab-music" class="tab-panel hidden flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-sm font-bold text-sky-400">Quản lý Nhạc Nền (Link MP3 hoặc Up File)</h2>
-            <p class="text-[11px] text-[hsl(var(--muted-foreground))]">Phát tự động khi khách bấm nghe nhạc trên web</p>
-          </div>
-          <button type="button" id="btn-add-music" class="rounded-xl bg-sky-500/15 border border-sky-400/50 px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/25 transition-colors shrink-0">
-            + Thêm bài
-          </button>
-        </div>
-        <div id="music-list" class="flex flex-col gap-3"></div>
       </section>
 
       <div id="admin-log" class="text-xs text-center text-sky-400 min-h-[1.25rem]"></div>
@@ -538,10 +523,6 @@
         if (dnsIdx !== null) {
           config.dnsServers[dnsIdx].fileUrl = `./${repoPath}`;
           renderDns();
-        } else if (folderPrefix === 'music') {
-          const mIdx = parseInt(targetInputId, 10);
-          config.music[mIdx].url = `./${repoPath}`;
-          renderMusic();
         } else {
           document.getElementById(targetInputId).value = `${SITE_ORIGIN}/${repoPath}`;
         }
@@ -626,33 +607,6 @@
       `).join('');
     }
 
-    function renderMusic() {
-      if (!Array.isArray(config.music) || !config.music.length) {
-        config.music = [
-          { title: 'Chill Lofi Ocean Breeze', artist: 'Nhật Tình Radio', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-          { title: 'Midnight Coding Session', artist: 'Nhật Tình Beats', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' }
-        ];
-      }
-      const box = document.getElementById('music-list');
-      box.innerHTML = config.music.map((m, i) => `
-        <div class="profile-card p-3.5 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400">Bài hát #${i + 1}</span>
-            <button type="button" onclick="config.music.splice(${i},1);renderMusic()" class="text-xs text-rose-400 hover:underline">Xóa</button>
-          </div>
-          <input class="inp" placeholder="Tên bài hát" value="${(m.title || '').replace(/"/g, '&quot;')}" oninput="config.music[${i}].title=this.value" />
-          <input class="inp" placeholder="Ca sĩ / Nguồn" value="${(m.artist || '').replace(/"/g, '&quot;')}" oninput="config.music[${i}].artist=this.value" />
-          <div class="flex gap-2 items-center">
-            <input class="inp flex-1" placeholder="Link MP3 (https://... hoặc ./uploads/...)" value="${(m.url || '').replace(/"/g, '&quot;')}" oninput="config.music[${i}].url=this.value" />
-            <label class="rounded-xl bg-sky-500/15 border border-sky-400/40 px-3 py-2 text-xs font-bold text-sky-400 cursor-pointer shrink-0 hover:bg-sky-500/25">
-              Up MP3
-              <input type="file" accept="audio/*" class="hidden" onchange="uploadFileToRepo(this,'${i}','music')" />
-            </label>
-          </div>
-        </div>
-      `).join('');
-    }
-
     function renderDns() {
       const countInp = document.getElementById('dns-count-input');
       if (countInp) countInp.value = config.dnsServers.length;
@@ -688,7 +642,6 @@
       renderMyProjects();
       renderSocial();
       renderDns();
-      renderMusic();
     }
 
     function collectForm() {
@@ -734,11 +687,6 @@
     document.getElementById('btn-add-dns').addEventListener('click', () => {
       config.dnsServers.push({ name: 'Máy Chủ Mới', url: 'https://cloudflare-dns.com/dns-query', fileUrl: '' });
       renderDns();
-    });
-    document.getElementById('btn-add-music').addEventListener('click', () => {
-      if (!Array.isArray(config.music)) config.music = [];
-      config.music.push({ title: 'Bài hát mới', artist: 'Nhật Tình', url: '' });
-      renderMusic();
     });
 
     document.getElementById('btn-preview-local').addEventListener('click', () => {

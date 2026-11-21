@@ -355,31 +355,52 @@
   // ===== 8. Music Player & Prompt =====
   const defaultPlaylist = [
     {
-      title: 'Chill Lofi Ocean Breeze',
-      artist: 'Nhật Tình Radio',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+      title: 'Kiếm Đâu Bây Giờ',
+      artist: 'Nguyễn Hùng',
+      url: 'https://lamdev.unaux.com/assets/music/kiem-dau-bay-gio.mp3'
     },
     {
-      title: 'Midnight Coding Session',
-      artist: 'Nhật Tình Beats',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+      title: 'Hỏi Vợ Ngoại Thành',
+      artist: 'Khưu Huy Vũ',
+      url: 'https://lamdev.unaux.com/assets/music/hoi-vo-ngoai-thanh.mp3'
     },
     {
-      title: 'Whale Dreams Ambient',
-      artist: 'Nhật Tình Studio',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+      title: 'Hello Việt Nam',
+      artist: 'Phạm Quỳnh Anh',
+      url: 'https://lamdev.unaux.com/assets/music/hello-viet-nam.mp3'
+    },
+    {
+      title: 'Ép Duyên',
+      artist: 'Long Hải',
+      url: 'https://lamdev.unaux.com/assets/music/ep-duyen.mp3'
+    },
+    {
+      title: 'Hướng Dương',
+      artist: 'Chú Cá Lạc Quan',
+      url: 'https://lamdev.unaux.com/assets/music/huong-duong.mp3'
+    },
+    {
+      title: 'Yêu Bằng Mắt',
+      artist: 'Đình Dũng',
+      url: 'https://lamdev.unaux.com/assets/music/yeu-bang-mat.mp3'
+    },
+    {
+      title: 'Lời Yêu Ngây Dại',
+      artist: 'Kha',
+      url: 'https://lamdev.unaux.com/assets/music/loi-yeu-ngay-dai.mp3'
+    },
+    {
+      title: 'Người Lạ Thoáng Qua',
+      artist: 'Đinh Tùng Huy',
+      url: 'https://lamdev.unaux.com/assets/music/nguoi-la-thoang-qua.mp3'
     }
   ];
 
   function getPlaylist() {
-    const cfg = window.SITE_CONFIG || {};
-    if (Array.isArray(cfg.music) && cfg.music.length > 0) {
-      return cfg.music.filter((m) => m && m.url && m.url.trim());
-    }
     return defaultPlaylist;
   }
 
-  let currentTrackIdx = 0;
+  let currentTrackIdx = Math.floor(Math.random() * defaultPlaylist.length);
   const audioEl = new Audio();
   audioEl.preload = 'none';
   let isPlaying = false;
