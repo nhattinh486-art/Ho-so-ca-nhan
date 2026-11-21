@@ -107,8 +107,15 @@
     renderInitial(initialKey);
 
     if (!isFileProtocol) {
-      fetch('./data/site-config.json?t=' + Date.now(), { cache: 'no-store' })
-        .then((res) => (res.ok ? res.json() : null))
+      const ghApiUrl = 'https://api.github.com/repos/nhattinh486-art/nhattinh486-art.github.io/contents/data/site-config.json?ref=main&_=' + Date.now();
+      fetch(ghApiUrl, {
+        cache: 'no-store',
+        headers: { Accept: 'application/vnd.github.raw+json' }
+      })
+        .then((res) => (res.ok ? res.json() : Promise.reject()))
+        .catch(() =>
+          fetch('./data/site-config.json?t=' + Date.now(), { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null))
+        )
         .then((remoteCfg) => {
           if (remoteCfg && typeof remoteCfg === 'object') {
             window.SITE_CONFIG = remoteCfg;

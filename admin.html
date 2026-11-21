@@ -708,7 +708,7 @@
         const jsonStr = JSON.stringify(config, null, 2);
         await githubPutFile(CONFIG_PATH, toBase64Utf8(jsonStr), 'Update site config from Mobile Admin', token);
         localStorage.removeItem('site_config_preview');
-        setLog('🎉 Đã cập nhật thành công! Web sẽ hiển thị bản mới sau ~20-30 giây.', '#34d399');
+        setLog('🎉 Đã cập nhật thành công! Web chính đã nhận dữ liệu mới ngay lập tức.', '#34d399');
         showAdminToast('Đã đẩy cấu hình mới lên web!', 'success');
       } catch (e) {
         setLog(`❌ Lỗi khi lưu lên GitHub: ${e.message}`, '#f87171');
@@ -720,10 +720,22 @@
 
     (async function init() {
       updateTokenBadge();
+      const token = localStorage.getItem('gh_admin_token') || '';
+      const headers = { Accept: 'application/vnd.github.raw+json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
       try {
-        const res = await fetch('./data/site-config.json?t=' + Date.now(), { cache: 'no-store' });
-        if (res.ok) config = await res.json();
+        const ghRes = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_PATH}?ref=main&_=${Date.now()}`,
+          { cache: 'no-store', headers }
+        );
+        if (ghRes.ok) config = await ghRes.json();
       } catch (_) {}
+      if (!config) {
+        try {
+          const res = await fetch('./data/site-config.json?t=' + Date.now(), { cache: 'no-store' });
+          if (res.ok) config = await res.json();
+        } catch (_) {}
+      }
       if (!config) {
         config = {
           bio: { subtitle: 'Nhật Tình', paragraphs: ['', ''] },
